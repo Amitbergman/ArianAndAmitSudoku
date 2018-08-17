@@ -59,3 +59,47 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	sudokuBoardPrinter(game->curBoard->board);
 
 }
+
+
+int doesBoardHaveErrors(SudokuBoard* board){
+	int n = board->n;
+	int m = board->m;
+	int N = n*m;
+	for (int i = 0; i<N;i++){
+		for (int j=0;j<N;j++){
+			if (board->board[i][j].isError==1)
+				return 1;}
+	}
+	return 0;
+
+}
+
+void saveBoardToFile(SudokuGame* game, char* fileToOpen){
+
+	int a = doesBoardHaveErrors(game->curBoard->board);
+	if (a==1 && game->gameMode==2){
+		printf("Error: board contains erroneous values\n");
+	}
+
+	if (game->gameMode==2){
+		//validateTheBoard and exit if not valid after printing not valid
+		//Error: board validation failed\n
+	}
+
+	FILE * fp;
+	fp = fopen(fileToOpen, "w");
+	if (!fp){
+		printf("Error: File cannot be created or modified\n");
+		return;
+	}
+	char* str = (char*)calloc(1024, sizeof(char));
+	str = sudokuBoardToString(game->curBoard->board);
+	fwrite(str, sizeof(char), 1024, fp);
+	fclose(fp);
+	sudokuBoardPrinter(game->curBoard->board);
+
+
+}
+
+
+

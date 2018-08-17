@@ -39,6 +39,7 @@ int startGame(){
 }
 int main ()
 {	SP_BUFF_SET();
+	printf("Sudoku\n------\n");
 	int **a = NULL;
 	// char* str = NULL;
 	a = (int**)calloc(10, sizeof(int*));
