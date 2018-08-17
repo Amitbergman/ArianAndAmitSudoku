@@ -32,6 +32,7 @@ Node* GetNewNode(SudokuBoard* x) {
 }
 
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
+	int test=0;
 	int **arr = (int**)calloc(N,sizeof(int*));
 	assert (arr!=NULL);
 	for (int i=0;i<N;i++){
