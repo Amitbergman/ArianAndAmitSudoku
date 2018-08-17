@@ -30,9 +30,6 @@ int startGame(){
 	game->history=(List*)calloc(1,sizeof(List));
 	game->curBoard=GetNewNode(newEmptyBoard());
 
-	(*game).board = newEmptyBoard();
-
-
 	while (exit==0){
 		printf("Enter your command:\n");
 		fgets(str,1024,stdin);

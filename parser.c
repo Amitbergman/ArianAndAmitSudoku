@@ -11,9 +11,13 @@
 #include <stdio.h>
 #include "main.h"
 #include "printer.h"
+
+#include "gameUtils.h"
+
 #include "structs.h"
 #include "ActionsHistory.h"
 //#include "game.h"
+
 
 int parseit(SudokuGame* game, char* str){
 	/*parses the string for every command line input
@@ -37,7 +41,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: file doesn't exist or cannot be opened\n");
 			return 0;
 		}
-		//loadBoardFromFile(game, token, 1);
+		loadBoardFromFile(game, token, 1);
 		return 0;
 	}
 	else if(strcmp(token,"edit")==0){
@@ -49,10 +53,12 @@ int parseit(SudokuGame* game, char* str){
 
 			InsertAtHead(game->history,newEmptyBoard());
 			game->curBoard=game->history->head;
+			sudokuBoardPrinter(game->curBoard->board);
 
 			return 0;
 		}
-		//loadBoardFromFile(game, token, 2);
+		loadBoardFromFile(game, token, 2);
+
 		return 0;
 	}
 	else if(strcmp(token,"mark_errors")==0){
