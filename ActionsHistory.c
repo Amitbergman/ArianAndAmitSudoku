@@ -53,8 +53,6 @@ SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
 		{
 			arr[i][j]=0;
 		}
-
-
 	}
 	return createSudokuBoardFromArray(arr, sqrt, sqrt);
 }
@@ -83,7 +81,30 @@ void InsertAtTail(List *list,SudokuBoard* x) {
 	newNode->prev = temp;
 }
 
-//Prints all elements in linked list in reverse traversal order.
+void undo (SudokuGame* game){
+	Node *nodeBoard=game->curBoard->prev;
+	if (nodeBoard==NULL){
+		printf("Error: no moves to undo\n");
+	}
+	else{
+		game->curBoard=nodeBoard;
+
+		sudokuBoardPrinter(game->curBoard->board);
+	}
+	return;
+}
+void redo (SudokuGame* game){
+	Node *nodeBoard=game->curBoard->next;
+	if (nodeBoard==NULL){
+		printf("Error: no moves to redo\n");
+	}
+	else{
+		game->curBoard=nodeBoard;
+		sudokuBoardPrinter(game->curBoard->board);
+	}
+	return;
+}
+
 //void undo (SudokuGame* game){
 //	if ((*(game.list)).prev!=NULL){
 //		(game->list)=(*(game->list).prev);
