@@ -13,14 +13,17 @@
 #include "printer.h"
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
+//TODO - function to free all memory of previous game
 	SudokuBoard* resBoard = newEmptyBoard();
 	(*game).gameMode = mode;
 	(*game).markErrors = 0;
 	FILE * fp;
 
 	fp = fopen (fileToOpen, "r");
-	assert (fp);
-
+	if (!fp){
+		printf("Error: file doesn't exist or cannot be opened\n");
+		return;
+	}
 
 	//Now the Buffer Has all the data from the file
 	int n =0;
@@ -47,7 +50,12 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			}
 		}
 	}
-	sudokuBoardPrinter(resBoard);
+	fclose(fp);
 
+	(*((*((*game).curBoard)).board))= *resBoard;
+	game->curBoard->next=NULL;
+	game->curBoard->prev = NULL;
+	game->history->head = game->curBoard;
+	sudokuBoardPrinter(game->curBoard->board);
 
 }

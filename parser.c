@@ -53,10 +53,12 @@ int parseit(SudokuGame* game, char* str){
 
 			InsertAtHead(game->history,newEmptyBoard());
 			game->curBoard=game->history->head;
+			sudokuBoardPrinter(game->curBoard->board);
 
 			return 0;
 		}
 		loadBoardFromFile(game, token, 2);
+
 		return 0;
 	}
 	else if(strcmp(token,"mark_errors")==0){
