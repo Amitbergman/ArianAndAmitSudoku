@@ -181,6 +181,22 @@ char* sudokuBoardToString(SudokuBoard* sudoku){
 	}
 	return res;
 }
+SudokuBoard* newEmptyBoard(){
+
+	int N=9;
+	int i=0;
+	int j=0;
+	int** a = (int**)calloc(N, sizeof(int*));
+
+	for (; i<N;i++){
+		j=0;
+		a[i] = (int *)calloc(N, sizeof(int));
+		for (; j<N; j++){
+			a[i][j]= 0;
+		}
+	}
+	return createSudokuBoardFromArray(a,3,3);
+}
 SudokuBoard* stringToSudokuBoard(char * str){
 	char* cur = str;
 
