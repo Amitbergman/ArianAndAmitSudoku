@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "main.h"
 #include "printer.h"
+#include "structs.h"
+#include "ActionsHistory.h"
 //#include "game.h"
 
 int parseit(SudokuGame* game, char* str){
@@ -26,7 +28,8 @@ int parseit(SudokuGame* game, char* str){
 	const char s[] = " \t\r\n";
 	char *token;
 	token = strtok(str, s);
-	int N=(game->board->m)*(game->board->n);
+	//int N=(game->board->m)*(game->board->n);
+	int N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -41,7 +44,12 @@ int parseit(SudokuGame* game, char* str){
 		token = strtok(NULL, s);
 		if (token==NULL){
 			game->gameMode=2; //0-init 1-solve 2-edit
-			game->board=newEmptyBoard();
+//			game->board=newEmptyBoard();
+//			game->curBoard=GetNewNode(newEmptyBoard());
+
+			InsertAtHead(game->history,newEmptyBoard());
+			game->curBoard=game->history->head;
+
 			return 0;
 		}
 		//loadBoardFromFile(game, token, 2);
@@ -66,7 +74,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 		}
 		else{
-			sudokuBoardPrinter(game->board);
+			sudokuBoardPrinter(game->curBoard->board);
 		}
 		return 0;
 	}
@@ -89,7 +97,7 @@ int parseit(SudokuGame* game, char* str){
 		}
 		//setXYZ(game,a);
 		if (game->gameMode==1){ //solve mode
-			if (game->board->board[a[0]][a[1]].isFixed==1){
+			if (game->curBoard->board->board[a[0]][a[1]].isFixed==1){
 				printf("Error: cell is fixed\n");
 				return 0;
 			}

@@ -10,6 +10,7 @@
 #include <assert.h>
 #include "printer.h"
 #include "ActionsHistory.h"
+#include "structs.h"
 
 Node* GetNewNode(SudokuBoard* x) {
 	Node* newNode
@@ -19,6 +20,28 @@ Node* GetNewNode(SudokuBoard* x) {
 	newNode->next = NULL;
 	return newNode;
 }
+SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
+	SudokuBoard* newBoard = (SudokuBoard*)calloc(1,sizeof(SudokuBoard));
+	assert(newBoard!=NULL);
+	newBoard->m=oldBoard->m;
+	newBoard->n=oldBoard->n;
+	int N=(newBoard->m)*(newBoard->n);
+	int i=0; int j=0;
+	(*newBoard).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
+	assert ((*newBoard).board!=NULL);
+	for (;i<N;i++){
+		j=0;
+		((*newBoard).board)[i] = (SudokuCell *) calloc (N, sizeof (SudokuCell));
+		assert(((*newBoard).board)[i]!=NULL);
+		for (;j<N;j++){
+			SudokuCell* currentCell = createNewCell((*oldBoard).board[i][j].content,(*oldBoard).board[i][j].isFixed,(*oldBoard).board[i][j].isError);
+			assert (currentCell!=NULL);
+			((((*newBoard).board)[i])[j]) = *currentCell;
+		}
+	}
+	return newBoard;
+}
+
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
 
 	int **arr = (int**)calloc(N,sizeof(int*));

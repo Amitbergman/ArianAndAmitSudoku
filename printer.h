@@ -14,6 +14,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include "main.h"
+#include "structs.h"
+
 SudokuBoard* newEmptyBoard();
 void printSeperatorRow (int n, int N);
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne);

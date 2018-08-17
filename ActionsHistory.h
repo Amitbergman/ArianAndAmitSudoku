@@ -8,15 +8,18 @@
 #ifndef ACTIONSHISTORY_H_
 #define ACTIONSHISTORY_H_
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
+#include "main.h"
+#include "printer.h"
+#include "parser.h"
+#include "ActionsHistory.h"
+#include "SPBufferset.h"
+#include "structs.h"
 
-typedef struct Node  {
-	SudokuBoard* board;
-	struct Node* next;
-	struct Node* prev;
-}Node;
-typedef struct List{
-	Node* head;
-} List;
+Node* GetNewNode(SudokuBoard* x);
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt);
 void InsertAtHead(List* list,SudokuBoard* newContent);
 void InsertAtTail(List *list,SudokuBoard* x);
