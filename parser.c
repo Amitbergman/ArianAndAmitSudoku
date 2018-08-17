@@ -1,7 +1,7 @@
 /*
  * parser.c
  *
- *  Created on: 16 באוג 2018
+ *  Created on: 16 ×‘×�×•×’ 2018
  *      Author: arian
  */
 #include <stdio.h>
@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "main.h"
+#include "printer.h"
 //#include "game.h"
 
 int parseit(SudokuGame* game, char* str){
@@ -92,7 +93,7 @@ int parseit(SudokuGame* game, char* str){
 				printf("Error: cell is fixed\n");
 				return 0;
 			}
-			validate(game);
+			//validate(game);
 			if (game->markErrors==0){
 				game->board->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
 				sudokuBoardPrinter(game->board); //print
