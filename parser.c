@@ -94,35 +94,24 @@ int parseit(SudokuGame* game, char* str){
 		int i=0;
 		for(;i<3;i++){
 			token = strtok(NULL, s);
-			if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)){
+			if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)||((i<2)&&(atoi(token)==0))){
 				printf("Error: value not in range 0-%d\n",N);
 				free(a);
 				return 0;
 			}
 			a[i]=atoi(token);
 		}
-		//setXYZ(game,a);
-		if (game->gameMode==1){ //solve mode
-			if (game->curBoard->board->board[a[0]][a[1]].isFixed==1){
-				printf("Error: cell is fixed\n");
-				return 0;
-			}
-			//validate(game);
-			if (game->markErrors==0){
-				game->curBoard->board->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
-				sudokuBoardPrinter(game->curBoard->board); //print
-				return 0;
-			}
-			//if (validate(game)==0){}
+		setXYZ(game,a);
 
-			//checkIfSolved(game);
-		}
-		else{ //edit mode
-			game->curBoard->board->board[a[0]][a[1]].content=a[2];
-			sudokuBoardPrinter(game->curBoard->board);
-
-		}
 		free(a);
+		return 0;
+	}
+	else if(strcmp(token,"undo")==0){
+		undo(game);
+		return 0;
+	}
+	else if(strcmp(token,"redo")==0){
+		redo(game);
 		return 0;
 	}
 	else if(strcmp(token,"exit")==0){

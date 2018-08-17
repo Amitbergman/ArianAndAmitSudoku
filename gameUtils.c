@@ -64,7 +64,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 void setXYZ(SudokuGame* game, int* a){
 	if (game->gameMode==1){ //solve mode
-		if (game->curBoard->board->board[a[0]][a[1]].isFixed==1){
+		if (game->curBoard->board->board[a[0]-1][a[1]-1].isFixed==1){
 			printf("Error: cell is fixed\n");
 			return;
 		}
@@ -72,7 +72,7 @@ void setXYZ(SudokuGame* game, int* a){
 		SudokuBoard* newBoard=duplicateBoard(game->curBoard->board);
 
 
-		newBoard->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
+		newBoard->board[a[0]-1][a[1]-1].content=a[2]; //set board[x][y]=z
 		Node* node=GetNewNode(newBoard);
 		node->prev=game->curBoard;
 		game->curBoard->next=node;
