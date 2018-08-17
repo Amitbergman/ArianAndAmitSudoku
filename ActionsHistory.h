@@ -23,4 +23,5 @@ Node* GetNewNode(SudokuBoard* x);
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt);
 void InsertAtHead(List* list,SudokuBoard* newContent);
 void InsertAtTail(List *list,SudokuBoard* x);
+SudokuBoard* duplicateBoard(SudokuBoard* oldBoard);
 #endif /* ACTIONSHISTORY_H_ */

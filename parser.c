@@ -109,8 +109,8 @@ int parseit(SudokuGame* game, char* str){
 			}
 			//validate(game);
 			if (game->markErrors==0){
-				game->board->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
-				sudokuBoardPrinter(game->board); //print
+				game->curBoard->board->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
+				sudokuBoardPrinter(game->curBoard->board); //print
 				return 0;
 			}
 			//if (validate(game)==0){}
@@ -118,8 +118,8 @@ int parseit(SudokuGame* game, char* str){
 			//checkIfSolved(game);
 		}
 		else{ //edit mode
-			game->board->board[a[0]][a[1]].content=a[2];
-			sudokuBoardPrinter(game->board);
+			game->curBoard->board->board[a[0]][a[1]].content=a[2];
+			sudokuBoardPrinter(game->curBoard->board);
 
 		}
 		free(a);

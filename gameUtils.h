@@ -9,5 +9,6 @@
 #define GAMEUTILS_H_
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
+void setXYZ(SudokuGame* game, int* a);
 
 #endif /* GAMEUTILS_H_ */

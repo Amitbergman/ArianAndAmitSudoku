@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "main.h"
 #include "printer.h"
+#include "ActionsHistory.h"
+
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 //TODO - function to free all memory of previous game
@@ -58,4 +60,34 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->history->head = game->curBoard;
 	sudokuBoardPrinter(game->curBoard->board);
 
+}
+
+void setXYZ(SudokuGame* game, int* a){
+	if (game->gameMode==1){ //solve mode
+		if (game->curBoard->board->board[a[0]][a[1]].isFixed==1){
+			printf("Error: cell is fixed\n");
+			return;
+		}
+		//TODO validate(game);
+		SudokuBoard* newBoard=duplicateBoard(game->curBoard->board);
+
+
+		newBoard->board[a[0]][a[1]].content=a[2]; //set board[x][y]=z
+		Node* node=GetNewNode(newBoard);
+		node->prev=game->curBoard;
+		game->curBoard->next=node;
+		game->curBoard=node;
+		sudokuBoardPrinter(game->curBoard->board); //print
+		return;
+
+		//if (validate(game)==0){}
+
+		//TODO checkIfSolved(game);
+	}
+	else{ //edit mode
+//		game->curBoard->board->board[a[0]][a[1]].content=a[2];
+//		sudokuBoardPrinter(game->curBoard->board);
+
+	}
+	return;
 }
