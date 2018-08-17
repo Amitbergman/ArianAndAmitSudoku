@@ -58,7 +58,7 @@ int parseit(SudokuGame* game, char* str){
 			return 0;
 		}
 		loadBoardFromFile(game, token, 2);
-
+		sudokuBoardPrinter(game->curBoard->board);
 		return 0;
 	}
 	else if(strcmp(token,"mark_errors")==0){
@@ -130,7 +130,14 @@ int parseit(SudokuGame* game, char* str){
 		return 1;
 	}
 	else {
+		if(strcmp(token,"save")==0){
+			token = strtok(NULL, s);
+			saveBoardToFile(game, token );
+
+		}
+		else{
 		printf("ERROR: invalid command\n");
+		}
 		return 0;
 	}
 }

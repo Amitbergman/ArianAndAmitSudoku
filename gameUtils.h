@@ -10,5 +10,6 @@
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
 void setXYZ(SudokuGame* game, int* a);
+void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 
 #endif /* GAMEUTILS_H_ */

@@ -23,7 +23,7 @@ void printSeperatorRow (int n, int N)
 	{
 		printf ("-");
 	}
-	printf ("\n");
+
 }
 
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne)
