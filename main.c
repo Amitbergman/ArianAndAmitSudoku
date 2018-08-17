@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "main.h"
+#include "structs.h"
 #include "printer.h"
 #include "parser.h"
 #include "ActionsHistory.h"
@@ -26,6 +27,8 @@ int startGame(){
 	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
 	game->gameMode=0; //init
 	game->markErrors=0;
+	game->history=(List*)calloc(1,sizeof(List));
+	game->curBoard=GetNewNode(newEmptyBoard());
 
 	(*game).board = newEmptyBoard();
 

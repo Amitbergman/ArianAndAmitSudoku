@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "printer.h"
+#include "structs.h"
 
 
 void printSeperatorRow (int n, int N)
