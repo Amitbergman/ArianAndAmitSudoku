@@ -13,20 +13,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-
-typedef struct SudokuCell
-{
-	int content;
-	int isFixed;
-	int isError;
-} SudokuCell;
-
-typedef struct SudokuBoard
-{
-	int n;
-	int m;
-	SudokuCell **board;
-} SudokuBoard;
+#include "main.h"
 
 void printSeperatorRow (int n, int N);
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne);
