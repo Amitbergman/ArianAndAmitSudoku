@@ -107,7 +107,9 @@ int doesBoardHaveErrors(SudokuBoard* board){
 }
 
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
-
+	int m = game->curBoard->board->m;
+	int n = game->curBoard->board->n;
+	int N = n*m;
 	int a = doesBoardHaveErrors(game->curBoard->board);
 	if (a==1 && game->gameMode==2){
 		printf("Error: board contains erroneous values\n");
@@ -124,9 +126,23 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		printf("Error: File cannot be created or modified\n");
 		return;
 	}
-	char* str = (char*)calloc(1024, sizeof(char));
-	str = sudokuBoardToString(game->curBoard->board);
-	fwrite(str, sizeof(char), 1024, fp);
+
+	fprintf(fp, "%d %d\n",m,n );
+	for (int i = 0; i<N;i++){
+		for (int j = 0; j<N;j++){
+			fprintf(fp, "%d", (game->curBoard->board->board)[i][j].content);
+			if ((game->curBoard->board->board)[i][j].isFixed){
+				fprintf(fp, ".");
+			}
+			if (j==N-1){
+				fprintf(fp, "\n");
+			}else{
+				fprintf(fp, " ");
+			}
+
+		}
+
+	}
 	fclose(fp);
 	sudokuBoardPrinter(game->curBoard->board);
 
