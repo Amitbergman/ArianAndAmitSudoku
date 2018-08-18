@@ -63,32 +63,25 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 }
 
 void setXYZ(SudokuGame* game, int* a){
-	if (game->gameMode==1){ //solve mode
-		if (game->curBoard->board->board[a[0]-1][a[1]-1].isFixed==1){
-			printf("Error: cell is fixed\n");
-			return;
-		}
-		//TODO validate(game);
-		SudokuBoard* newBoard=duplicateBoard(game->curBoard->board);
-
-
-		newBoard->board[a[0]-1][a[1]-1].content=a[2]; //set board[x][y]=z
-		Node* node=GetNewNode(newBoard);
-		node->prev=game->curBoard;
-		game->curBoard->next=node;
-		game->curBoard=node;
-		sudokuBoardPrinter(game->curBoard->board); //print
+	if ((game->gameMode==1)&&(game->curBoard->board->board[a[0]-1][a[1]-1].isFixed==1)){ //value fixed in solve mode
+		printf("Error: cell is fixed\n");
 		return;
-
-		//if (validate(game)==0){}
-
-		//TODO checkIfSolved(game);
 	}
-	else{ //edit mode
-//		game->curBoard->board->board[a[0]][a[1]].content=a[2];
-//		sudokuBoardPrinter(game->curBoard->board);
 
-	}
+	SudokuBoard* newBoard=duplicateBoard(game->curBoard->board);
+	newBoard->board[a[0]-1][a[1]-1].content=a[2]; //set board[x][y]=z
+
+	cleanNextNodes(game->curBoard->next); // free proceeding nodes in history list
+	Node* node=GetNewNode(newBoard); // create new node for new board
+	node->prev=game->curBoard; // update prev and next
+	game->curBoard->next=node;
+	game->curBoard=node;
+	sudokuBoardPrinter(game->curBoard->board); //print
+	return;
+
+	//TODO if ((game.mode==1)&&(validate(game)==0)||boardIsFull(game)){print puzzle solutions succesfuly/errornous}
+
+	//TODO checkIfSolved(game);
 	return;
 }
 

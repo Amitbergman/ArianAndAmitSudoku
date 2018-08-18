@@ -114,6 +114,10 @@ int parseit(SudokuGame* game, char* str){
 		redo(game);
 		return 0;
 	}
+	else if(strcmp(token,"reset")==0){
+			resetGame(game);
+			return 0;
+		}
 	else if(strcmp(token,"exit")==0){
 		printf("Exiting...\n");
 		return 1;
