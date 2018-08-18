@@ -40,6 +40,32 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	}
 	return newBoard;
 }
+void resetGame(SudokuGame* game){
+	game->curBoard=game->history->head;
+	cleanNextNodes(game->curBoard->next);
+	game->curBoard->next=NULL;
+	printf("Board reset\n");
+}
+void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
+	int N=(boardA->m)*(boardA->n);
+	int i=0; int j=0;
+	int z1; int z2;
+
+	for (;i<N;i++){
+		j=0;
+
+		for (;j<N;j++){
+			z1=boardA->board[i][j].content;
+			z2=boardB->board[i][j].content;
+
+			if (z1!=z2){
+				printf(undoRedo);
+				printf(" %d,%d: from %d to %d\n",i+1,j+1,z1,z2);
+			}
+		}
+	}
+}
+
 
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
 
@@ -79,7 +105,25 @@ void InsertAtTail(List *list,SudokuBoard* x) {
 	temp->next = newNode;
 	newNode->prev = temp;
 }
-
+void cleanNextNodes (Node* node){
+	if (node==NULL){
+		return;
+	}
+	Node* next=node->next;
+	freeBoard(node->board);
+	cleanNextNodes(next);
+	node->next=NULL;
+	return;
+}
+void freeBoard(SudokuBoard* board){
+	int i=0;
+	int N=(board->m)*(board->n);
+	for (;i<N;i++){
+		free(board->board[i]);
+	}
+	free(board);
+	return;
+}
 void undo (SudokuGame* game){
 	Node *nodeBoard=game->curBoard->prev;
 	if (nodeBoard==NULL){
@@ -87,7 +131,7 @@ void undo (SudokuGame* game){
 	}
 	else{
 		game->curBoard=nodeBoard;
-
+		printDiffs(game->curBoard->next->board, game->curBoard->board, "Undo");
 		sudokuBoardPrinter(game->curBoard->board);
 	}
 	return;
@@ -99,18 +143,10 @@ void redo (SudokuGame* game){
 	}
 	else{
 		game->curBoard=nodeBoard;
+		printDiffs(game->curBoard->prev->board, game->curBoard->board, "Redo");
 		sudokuBoardPrinter(game->curBoard->board);
 	}
 	return;
 }
 
-//void undo (SudokuGame* game){
-//	if ((*(game.list)).prev!=NULL){
-//		(game->list)=(*(game->list).prev);
-//		printChanges(before,after);
-//	}
-//   else
-//	printf("Error: no moves to undo\n")
-//
-//}
 

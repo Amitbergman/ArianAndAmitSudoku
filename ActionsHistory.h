@@ -26,4 +26,7 @@ void InsertAtTail(List *list,SudokuBoard* x);
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard);
 void undo (SudokuGame* game);
 void redo (SudokuGame* game);
+void freeBoard(SudokuBoard* board);
+void cleanNextNodes (Node* node);
+void resetGame(SudokuGame* game);
 #endif /* ACTIONSHISTORY_H_ */
