@@ -168,20 +168,6 @@ char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
 
 
 }
-char* sudokuBoardToString(SudokuBoard* sudoku){
-	int n = (*sudoku).n;
-	int m = (*sudoku).m;
-	int N = n*m;
-	char *res = (char*)calloc(1024, sizeof(char));
-	char buffer[1024];
-	sprintf(buffer, "%d %d\n", m,n);
-	strcat(res, buffer);
-	for (int i=0;i<N;i++){
-		strcat (res, rowToStr(sudoku, i));
-		strcat(res, "\n");
-	}
-	return res;
-}
 SudokuBoard* newEmptyBoard(){
 
 	int N=9;
