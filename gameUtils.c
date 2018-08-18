@@ -130,7 +130,6 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	fclose(fp);
 	sudokuBoardPrinter(game->curBoard->board);
 
-
 }
 
 SudokuGame* initGameInInitMode(){

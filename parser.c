@@ -36,9 +36,10 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: file doesn't exist or cannot be opened\n");
 			return 0;
 		}
+		//TODO - free memory of previous game
 		loadBoardFromFile(game, token, 1);
 		return 0;
-		}
+	}
 	if(strcmp(token,"edit")==0){
 		token = strtok(NULL, s);
 		if (token==NULL){//edit with no file path
@@ -51,7 +52,7 @@ int parseit(SudokuGame* game, char* str){
 		loadBoardFromFile(game, token, 2);
 
 		return 0;
-		}
+	}
 	if(strcmp(token,"mark_errors")==0){
 		if(game->gameMode!=1){
 			printf("ERROR: invalid command\n");
@@ -66,7 +67,7 @@ int parseit(SudokuGame* game, char* str){
 			game->markErrors=atoi(token);
 		}
 		return 0;
-		}
+	}
 	if(strcmp(token,"print_board")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
@@ -75,7 +76,7 @@ int parseit(SudokuGame* game, char* str){
 			sudokuBoardPrinter(game->curBoard->board);
 		}
 		return 0;
-		}
+	}
 
 	if(strcmp(token,"set")==0){
 		if(game->gameMode==0){
@@ -101,61 +102,56 @@ int parseit(SudokuGame* game, char* str){
 
 		free(a);
 		return 0;
-		}
+	}
 	if(strcmp(token,"undo")==0){
 		undo(game);
 		return 0;
-		}
+	}
 	if(strcmp(token,"redo")==0){
 		redo(game);
 		return 0;
-		}
+	}
 	if(strcmp(token,"reset")==0){
-			resetGame(game);
-			return 0;
-		}
-	 if(strcmp(token,"exit")==0){
+		resetGame(game);
+		return 0;
+	}
+	if(strcmp(token,"exit")==0){
 
 		printf("Exiting...\n");
 		return 1;
-		}
+	}
 	if(strcmp(token,"save")==0){
 		token = strtok(NULL, s);
-		saveBoardToFile(game, token );
+		saveBoardToFile(game, token);
 		return 0;
-		}
+	}
 
 	if (strcmp(token,"num_solutions")==0){
 		printf("num_solutions");
 		return 0;
-		}
+	}
 
 	if (strcmp(token,"autofill")==0){
 		printf("autofill");
 		return 0;
-		}
-	if (strcmp(token,"reset")==0){
-		printf("reset");
-		return 0;
+	}
 
-		}
 	if (strcmp(token,"hint")==0){
 		printf("hint");
 		return 0;
-		}
+	}
 	if(strcmp(token,"validate")==0){
 		printf("validate");
 		return 0;
-		}
+	}
 	if(strcmp(token,"generate")==0){
 		printf("generate");
 		return 0;
-		}
-		printf("ERROR: invalid command\n");
-		return 0;
+	}
+	printf("ERROR: invalid command\n");
+	return 0;
 
-
-		}
+}
 
 
 
