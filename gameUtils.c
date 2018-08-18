@@ -68,6 +68,7 @@ void setXYZ(SudokuGame* game, int* a){
 			printf("Error: cell is fixed\n");
 			return;
 		}
+
 		//TODO validate(game);
 		SudokuBoard* newBoard=duplicateBoard(game->curBoard->board);
 
@@ -75,6 +76,10 @@ void setXYZ(SudokuGame* game, int* a){
 		newBoard->board[a[0]-1][a[1]-1].content=a[2]; //set board[x][y]=z
 		Node* node=GetNewNode(newBoard);
 		node->prev=game->curBoard;
+		//TODO - change to free all the nodes after the current,
+		//because we are starting a new path of action and all the undo that brought us here
+		//are not relevant.
+		free(game->curBoard->next);//free previousely done action
 		game->curBoard->next=node;
 		game->curBoard=node;
 		sudokuBoardPrinter(game->curBoard->board); //print
@@ -130,4 +135,20 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	sudokuBoardPrinter(game->curBoard->board);
 
 
+}
+
+SudokuGame* initGameInInitMode(){
+	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
+	game->gameMode=0; //init
+	game->markErrors=0;
+	game->history=(List*)calloc(1,sizeof(List));
+	game->curBoard=GetNewNode(newEmptyBoard());
+
+	return game;
+}
+void changeToEmptyGameInEditMode(SudokuGame* game){
+	game->gameMode=2; //0-init 1-solve 2-edit
+	InsertAtHead(game->history,newEmptyBoard());
+	game->curBoard=game->history->head;
+	sudokuBoardPrinter(game->curBoard->board);
 }

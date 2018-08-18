@@ -26,12 +26,12 @@ void printSeperatorRow (int n, int N)
 
 }
 
-void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne)
+void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkErrorsSetToOne)
 {
 	printf (" ");
 	if (cellToPrint.content > 0)
 	{
-		printf ("%d", cellToPrint.content);
+		printf ("%2d", cellToPrint.content);
 	}
 	else
 	{
@@ -43,7 +43,7 @@ void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne)
 	}
 	else
 	{
-		if (cellToPrint.isError == 1 && isInEditModeOrMarkSetToOne == 1)
+		if (cellToPrint.isError == 1 && isInEditModeOrMarkErrorsSetToOne == 1)
 		{
 			printf ("*");
 		}

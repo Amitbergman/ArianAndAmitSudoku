@@ -11,28 +11,23 @@
 #include <stdio.h>
 #include "main.h"
 #include "printer.h"
-
 #include "gameUtils.h"
-
 #include "structs.h"
 #include "ActionsHistory.h"
-//#include "game.h"
 
 
 int parseit(SudokuGame* game, char* str){
 	/*parses the string for every command line input
-	 * returns 1 for exit and 0 else
+	 * returns 1 for exit and 0 to continue the game
 	1= solve X
 	2= edit [X]
 	3= mark_errors X
 	4= printboard
-
-
 	 */
+
 	const char s[] = " \t\r\n";
 	char *token;
 	token = strtok(str, s);
-	//int N=(game->board->m)*(game->board->n);
 	int N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
 	if(strcmp(token,"solve")==0){
@@ -43,30 +38,27 @@ int parseit(SudokuGame* game, char* str){
 		}
 		loadBoardFromFile(game, token, 1);
 		return 0;
-	}
-	else if(strcmp(token,"edit")==0){
+		}
+	if(strcmp(token,"edit")==0){
 		token = strtok(NULL, s);
-		if (token==NULL){
-			game->gameMode=2; //0-init 1-solve 2-edit
-//			game->board=newEmptyBoard();
-//			game->curBoard=GetNewNode(newEmptyBoard());
-
-			InsertAtHead(game->history,newEmptyBoard());
-			game->curBoard=game->history->head;
-			sudokuBoardPrinter(game->curBoard->board);
+		if (token==NULL){//edit with no file path
+			//TODO - free memory of previous game
+			changeToEmptyGameInEditMode(game);
 
 			return 0;
 		}
+		//TODO - free memory of previous game !!!if the loading succeeded!!!
 		loadBoardFromFile(game, token, 2);
-		sudokuBoardPrinter(game->curBoard->board);
+
 		return 0;
-	}
-	else if(strcmp(token,"mark_errors")==0){
+		}
+	if(strcmp(token,"mark_errors")==0){
 		if(game->gameMode!=1){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
 		token = strtok(NULL, s);
+
 		if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>1)){
 			printf("Error: the value should be 0 or 1\n");
 		}
@@ -74,8 +66,8 @@ int parseit(SudokuGame* game, char* str){
 			game->markErrors=atoi(token);
 		}
 		return 0;
-	}
-	else if(strcmp(token,"print_board")==0){
+		}
+	if(strcmp(token,"print_board")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
 		}
@@ -83,14 +75,18 @@ int parseit(SudokuGame* game, char* str){
 			sudokuBoardPrinter(game->curBoard->board);
 		}
 		return 0;
-	}
+		}
 
-	else if(strcmp(token,"set")==0){
+	if(strcmp(token,"set")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
 		int* a=(int*)calloc(3,sizeof(int));
+		if (!a){
+			printf("Error: problem while allocating memory");
+			return 1;
+		}
 		int i=0;
 		for(;i<3;i++){
 			token = strtok(NULL, s);
@@ -105,29 +101,56 @@ int parseit(SudokuGame* game, char* str){
 
 		free(a);
 		return 0;
-	}
-	else if(strcmp(token,"undo")==0){
+		}
+	if(strcmp(token,"undo")==0){
 		undo(game);
 		return 0;
-	}
-	else if(strcmp(token,"redo")==0){
+		}
+	if(strcmp(token,"redo")==0){
 		redo(game);
 		return 0;
-	}
-	else if(strcmp(token,"exit")==0){
+		}
+	if(strcmp(token,"exit")==0){
 		printf("Exiting...\n");
 		return 1;
-	}
-	else {
-		if(strcmp(token,"save")==0){
-			token = strtok(NULL, s);
-			saveBoardToFile(game, token );
+		}
+	if(strcmp(token,"save")==0){
+		token = strtok(NULL, s);
+		saveBoardToFile(game, token );
+		return 0;
+		}
+
+	if (strcmp(token,"num_solutions")==0){
+		printf("num_solutions");
+		return 0;
+		}
+
+	if (strcmp(token,"autofill")==0){
+		printf("autofill");
+		return 0;
+		}
+	if (strcmp(token,"reset")==0){
+		printf("reset");
+		return 0;
 
 		}
-		else{
-		printf("ERROR: invalid command\n");
-		}
+	if (strcmp(token,"hint")==0){
+		printf("hint");
 		return 0;
-	}
-}
+		}
+	if(strcmp(token,"validate")==0){
+		printf("validate");
+		return 0;
+		}
+	if(strcmp(token,"generate")==0){
+		printf("generate");
+		return 0;
+		}
+		printf("ERROR: invalid command\n");
+		return 0;
+
+
+		}
+
+
 

@@ -13,8 +13,7 @@
 #include "structs.h"
 
 Node* GetNewNode(SudokuBoard* x) {
-	Node* newNode
-		= (Node*)malloc(sizeof(Node));
+	Node* newNode = (Node*)calloc(1,sizeof(Node));
 	newNode->board = x;
 	newNode->prev = NULL;
 	newNode->next = NULL;
