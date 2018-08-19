@@ -113,15 +113,30 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"undo")==0){
-		undo(game);
+		if(game->gameMode==0){
+			printf("ERROR: invalid command\n");
+		}
+		else{
+			undo(game);
+		}
 		return 0;
 	}
 	if(strcmp(token,"redo")==0){
-		redo(game);
+		if(game->gameMode==0){
+			printf("ERROR: invalid command\n");
+		}
+		else{
+			redo(game);
+		}
 		return 0;
 	}
 	if(strcmp(token,"reset")==0){
-		resetGame(game);
+		if(game->gameMode==0){
+			printf("ERROR: invalid command\n");
+		}
+		else{
+			resetGame(game);
+		}
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
@@ -130,8 +145,13 @@ int parseit(SudokuGame* game, char* str){
 		return 1;
 	}
 	if(strcmp(token,"save")==0){
-		token = strtok(NULL, s);
-		saveBoardToFile(game, token);
+		if(game->gameMode==0){
+			printf("ERROR: invalid command\n");
+		}
+		else{
+			token = strtok(NULL, s);
+			saveBoardToFile(game, token);
+		}
 		return 0;
 	}
 
