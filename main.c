@@ -19,21 +19,25 @@
 #include "gameUtils.h"
 
 
-//Creates a new Node and returns pointer to it.
+/* Creates a new Node and returns pointer to it. */
 
 int startGame(){
-	int exit=0;
-	char* input=(char*)calloc(1024,sizeof(char));
+	int exit;
+	char* input;
+	SudokuGame* game;
 
-	SudokuGame* game = initGameInInitMode();
+	exit=0;
+	input=(char*)calloc(1024,sizeof(char));
+	game = initGameInInitMode();
 
 	while (exit==0){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
 		exit=parseit(game,input);
 	}
-	//TODO - free all the list of boards
-	//TODO - free the game
+	/* TODO - free all the list of boards
+	 * TODO - free the game
+	 */
 	return 0;
 }
 int main ()
@@ -42,11 +46,4 @@ int main ()
 	startGame();
 	return 0;
 }
-
-
-
-
-
-
-
 

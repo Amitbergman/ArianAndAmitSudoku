@@ -25,10 +25,13 @@ int parseit(SudokuGame* game, char* str){
 	4= printboard
 	 */
 
-	const char s[] = " \t\r\n";
+	int N;
+	int i;
+	int* a;
 	char *token;
+	const char s[] = " \t\r\n";
 	token = strtok(str, s);
-	int N=(game->curBoard->board->m)*(game->curBoard->board->n);
+	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -36,19 +39,25 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: file doesn't exist or cannot be opened\n");
 			return 0;
 		}
-		//TODO - free memory of previous game
+		/* TODO - free memory of previous game
+		 *
+		 */
 		loadBoardFromFile(game, token, 1);
 		return 0;
 	}
 	if(strcmp(token,"edit")==0){
 		token = strtok(NULL, s);
-		if (token==NULL){//edit with no file path
-			//TODO - free memory of previous game
+		if (token==NULL){/* edit with no file path */
+			/* TODO - free memory of previous game
+			 *
+			 */
 			changeToEmptyGameInEditMode(game);
 
 			return 0;
 		}
-		//TODO - free memory of previous game !!!if the loading succeeded!!!
+		/* TODO - free memory of previous game !!!if the loading succeeded!!!
+		 *
+		 */
 		loadBoardFromFile(game, token, 2);
 
 		return 0;
@@ -83,12 +92,12 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
-		int* a=(int*)calloc(3,sizeof(int));
+		a=(int*)calloc(3,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
 			return 1;
 		}
-		int i=0;
+		i=0;
 		for(;i<3;i++){
 			token = strtok(NULL, s);
 			if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)||((i<2)&&(atoi(token)==0))){

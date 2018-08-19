@@ -35,7 +35,7 @@ typedef struct List{
 
 typedef struct SudokuGame
 {
-	int gameMode; //0-init 1-solve 2-edit
+	int gameMode; /* 0-init 1-solve 2-edit */
 	int markErrors;
 	List *history;
 	Node *curBoard;

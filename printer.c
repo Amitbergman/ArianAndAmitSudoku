@@ -57,13 +57,14 @@ void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkErrorsSetToOne)
 void printRealRow (SudokuBoard * boardPointer, int rowToPrint)
 {
 
+	int i,n,m,N, column;
 	SudokuBoard sudboard = *boardPointer;
-	int i = 0;
-	int n = sudboard.n;
-	int m = sudboard.m;
-	int N = n * m;
+	i = 0;
+	n = sudboard.n;
+	m = sudboard.m;
+	N = n * m;
 
-	int column = 0;
+	column = 0;
 	for (; i < N + m + 1; i++){
 		if (i % (n + 1) == 0){
 			printf ("|");
@@ -83,7 +84,6 @@ SudokuCell* createNewCell(int content, int isFixed, int isError){
 		(*cellRef).isError=isError;
 		(*cellRef).isFixed=isFixed;
 		return cellRef;
-
 	}
 	else{
 		return NULL;
@@ -93,12 +93,14 @@ SudokuCell* createNewCell(int content, int isFixed, int isError){
 void sudokuBoardPrinter (SudokuBoard * boardPointer)
 {
 
+	int i,n,m,N, row;
 	SudokuBoard board = *boardPointer;
-	int n = board.n;
-	int m = board.m;
-	int N = n * m;
+	n = board.n;
+	m = board.m;
+	N = n * m;
+	row = 0;
+	i = 0;
 
-	int row = 0, i = 0;
 	for (; i < N + n + 1; i++)
 	{
 
@@ -115,16 +117,16 @@ void sudokuBoardPrinter (SudokuBoard * boardPointer)
 }
 
 SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
-	int N = n*m;
-	int i = 0;
-	int j = 0;
+	int i,j,N;
 
 	SudokuBoard* result = (SudokuBoard*)calloc(1, sizeof(SudokuBoard));
 	assert(result!=NULL);
 	(*result).n=n;
 	(*result).m=m;
+	N = n*m;
 	(*result).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
 	assert ((*result).board!=NULL);
+	i = 0;
 	for (;i<N;i++){
 		j=0;
 		((*result).board)[i] = (SudokuCell *) calloc (N, sizeof (SudokuCell));
@@ -133,31 +135,29 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 			SudokuCell* currentCell = createNewCell(array[i][j],0,0);
 			assert (currentCell!=NULL);
 			((((*result).board)[i])[j]) = *currentCell;
-
 		}
-
 	}
 	return result;
 
 }
 
 char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
-	char *row = (char*)calloc(1024, sizeof(char));
-
-	int n = (*sudoku).n;
-	int m = (*sudoku).m;
-	int N = n*m;
+	int i,n,m,N,a;
 	char buffer[1024];
 	char* empty = "";
-	for (int i = 0;i<N;i++){
+	char *row = (char*)calloc(1024, sizeof(char));
+	n = (*sudoku).n;
+	m = (*sudoku).m;
+	N = n*m;
+	i=0;
+	for (;i<N;i++){
 		strcpy(buffer,empty );
-		int a = ((*sudoku).board[rowToPrint][i]).content;
+		a = ((*sudoku).board[rowToPrint][i]).content;
 		if (((*sudoku).board[rowToPrint][i]).isFixed ==1){
 			sprintf(buffer, "%d.", a );
 		}
 		else{
 			sprintf(buffer, "%d", a );
-
 		}
 		if (i!=N-1){
 			strcat(buffer, " ");
@@ -166,14 +166,14 @@ char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
 	}
 	return row;
 
-
 }
 SudokuBoard* newEmptyBoard(){
+	int i,j,N;
+	int** a;
 
-	int N=9;
-	int i=0;
-	int j=0;
-	int** a = (int**)calloc(N, sizeof(int*));
+	N=9;
+	i=0;
+	a = (int**)calloc(N, sizeof(int*));
 
 	for (; i<N;i++){
 		j=0;
@@ -185,12 +185,13 @@ SudokuBoard* newEmptyBoard(){
 	return createSudokuBoardFromArray(a,3,3);
 }
 SudokuBoard* stringToSudokuBoard(char * str){
+	char x;
 	char* cur = str;
 
 	while ((*cur) != '\0'){
 
 		cur=cur+1;
-		char x = *cur;
+		x = *cur;
 		printf("%c\n", x);
 	}
 	return NULL;

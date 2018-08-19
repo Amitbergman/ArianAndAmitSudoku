@@ -20,12 +20,14 @@ Node* GetNewNode(SudokuBoard* x) {
 	return newNode;
 }
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
+	int i,j,N;
+
 	SudokuBoard* newBoard = (SudokuBoard*)calloc(1,sizeof(SudokuBoard));
 	assert(newBoard!=NULL);
 	newBoard->m=oldBoard->m;
 	newBoard->n=oldBoard->n;
-	int N=(newBoard->m)*(newBoard->n);
-	int i=0; int j=0;
+	N=(newBoard->m)*(newBoard->n);
+	i=0;
 	(*newBoard).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
 	assert ((*newBoard).board!=NULL);
 	for (;i<N;i++){
@@ -47,20 +49,17 @@ void resetGame(SudokuGame* game){
 	printf("Board reset\n");
 }
 void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
-	int N=(boardA->m)*(boardA->n);
-	int i=0; int j=0;
-	int z1; int z2;
+	int i,j,N,z1,z2;
+	i=0;
+	N=(boardA->m)*(boardA->n);
 
 	for (;i<N;i++){
 		j=0;
-
 		for (;j<N;j++){
 			z1=boardA->board[i][j].content;
 			z2=boardB->board[i][j].content;
-
 			if (z1!=z2){
-				printf(undoRedo);
-				printf(" %d,%d: from %d to %d\n",i+1,j+1,z1,z2);
+				printf("%s %d,%d: from %d to %d\n",undoRedo,i+1,j+1,z1,z2);
 			}
 		}
 	}
@@ -68,20 +67,24 @@ void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 
 
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
-
+	int i,j;
 	int **arr = (int**)calloc(N,sizeof(int*));
 	assert (arr!=NULL);
-	for (int i=0;i<N;i++){
+	i=0;
+	for (;i<N;i++){
+		j=0;
 		arr[i] = (int*)calloc(N,sizeof(int));
 		assert(arr[i]!=NULL);
-		for(int j=0;j<N;j++)
+		for(;j<N;j++)
 		{
 			arr[i][j]=0;
 		}
 	}
 	return createSudokuBoardFromArray(arr, sqrt, sqrt);
 }
-//Inserts a Node at head of doubly linked list
+/*Inserts a Node at head of doubly linked list
+ *
+ */
 void InsertAtHead(List* list,SudokuBoard* newContent) {
 	struct Node* newNode = GetNewNode(newContent);
 	if((*list).head == NULL) {
@@ -93,23 +96,28 @@ void InsertAtHead(List* list,SudokuBoard* newContent) {
 	(*list).head = newNode;
 }
 
-//Inserts a Node at tail of Doubly linked list
+/* Inserts a Node at tail of Doubly linked list
+ *
+ */
 void InsertAtTail(List *list,SudokuBoard* x) {
-	Node* temp = (*list).head;
-	Node* newNode = GetNewNode(x);
+	Node* temp;
+	Node* newNode;
+	temp = (*list).head;
+	newNode = GetNewNode(x);
 	if((*list).head == NULL) {
 		(*list).head = newNode;
 		return;
 	}
-	while(temp->next != NULL) temp = temp->next; // Go To last Node
+	while(temp->next != NULL) temp = temp->next; /* Go To last Node */
 	temp->next = newNode;
 	newNode->prev = temp;
 }
 void cleanNextNodes (Node* node){
+	Node* next;
 	if (node==NULL){
 		return;
 	}
-	Node* next=node->next;
+	next=node->next;
 	freeBoard(node->board);
 	cleanNextNodes(next);
 	node->next=NULL;
