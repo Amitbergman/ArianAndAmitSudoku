@@ -14,6 +14,7 @@
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
+#include "gurobi.h"
 
 
 int parseit(SudokuGame* game, char* str){
@@ -32,6 +33,8 @@ int parseit(SudokuGame* game, char* str){
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
+
+	SudokuBoard* test;
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -143,6 +146,11 @@ int parseit(SudokuGame* game, char* str){
 
 		printf("Exiting...\n");
 		return 1;
+	}
+	if(strcmp(token,"testSolve")==0){
+		test=gurobi(game,game->curBoard->board->m,game->curBoard->board->n);
+		sudokuBoardPrinter(test);
+		return 0;
 	}
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
