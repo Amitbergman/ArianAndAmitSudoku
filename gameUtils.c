@@ -12,7 +12,7 @@
 #include "main.h"
 #include "printer.h"
 #include "ActionsHistory.h"
-
+#include "gameUtils.h"
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 /* TODO - function to free all memory of previous game
@@ -171,8 +171,55 @@ SudokuGame* initGameInInitMode(){
 	return game;
 }
 void changeToEmptyGameInEditMode(SudokuGame* game){
+
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
 	InsertAtHead(game->history,newEmptyBoard());
 	game->curBoard=game->history->head;
 	sudokuBoardPrinter(game->curBoard->board);
 }
+int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
+	int i=1;
+	int counter = 0;
+	int m = board->m;
+	int n = board->n;
+	int N = n*m;
+	for (;i<=N;i++){
+		 counter += isLegalValue(board, col, row, i);
+		}
+	return counter;
+	}
+int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
+	int n = board->n;
+	int m = board->m;
+	int N = n*m;
+	for (int i=0;i<N;i++){
+		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
+			return 0;
+		}
+	}
+	for (int i=0;i<N;i++){
+		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
+			return 0;
+		}
+	}
+	return checkValidInBox(board, col, row, n, m, valueToCheck);
+
+
+
+}
+int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
+	 int startCol = (col/m)*m;
+	 int startRow = (row/n)*n;
+	 int i = startCol;
+	 int j = startRow;
+	 for (;i<startCol+m;i++){
+		 for (;j<startRow+n;j++){
+			 if (board->board[i][j].content==valueToCheck){
+				 return 0;
+			 }
+		 }
+	 }
+	 return 1;
+
+}
+
