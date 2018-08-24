@@ -9,7 +9,10 @@
 #define GAMEUTILS_H_
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
+void setBoard(SudokuGame* game, SudokuBoard* newBoard);
 void setXYZ(SudokuGame* game, int* a);
+void validate(SudokuBoard* board);
+int doesBoardHaveErrors(SudokuBoard* board);
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 SudokuGame* initGameInInitMode();
 void changeToEmptyGameInEditMode(SudokuGame*);

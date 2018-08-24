@@ -30,11 +30,11 @@ int parseit(SudokuGame* game, char* str){
 	int i;
 	int* a;
 	char *token;
+	SudokuBoard* test;
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
-	SudokuBoard* test;
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -115,6 +115,13 @@ int parseit(SudokuGame* game, char* str){
 		free(a);
 		return 0;
 	}
+	if(strcmp(token,"validate")==0){
+		if(game->gameMode==0){
+					printf("ERROR: invalid command\n");
+				}
+		validate(game->curBoard->board);
+		return 0;
+	}
 	if(strcmp(token,"undo")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
@@ -148,10 +155,15 @@ int parseit(SudokuGame* game, char* str){
 		return 1;
 	}
 	if(strcmp(token,"testSolve")==0){
-		test=gurobi(game,game->curBoard->board->m,game->curBoard->board->n);
-		sudokuBoardPrinter(test);
+		test= gurobi(game->curBoard->board);
+		if (test!=NULL){
+			printf("test!=null");
+			setBoard(game,test);
+		}
+		/*game->curBoard->board=test;*/
 		return 0;
 	}
+
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");

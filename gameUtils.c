@@ -12,6 +12,7 @@
 #include "main.h"
 #include "printer.h"
 #include "ActionsHistory.h"
+#include "gurobi.h"
 
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
@@ -69,7 +70,19 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	sudokuBoardPrinter(game->curBoard->board);
 
 }
+void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
+	Node* node;
+	printf("m=%d, n=%d\n",newBoard->m,newBoard->n);
+
+	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
+	node=GetNewNode(newBoard); /* create new node for new board */
+	node->prev=game->curBoard; /* update prev and next */
+	game->curBoard->next=node;
+	game->curBoard=node;
+	/*sudokuBoardPrinter(game->curBoard->board);*/
+
+}
 void setXYZ(SudokuGame* game, int* a){
 
 	SudokuBoard* newBoard;
@@ -99,7 +112,18 @@ void setXYZ(SudokuGame* game, int* a){
 
 	return;
 }
-
+void validate(SudokuBoard* board){
+	if(doesBoardHaveErrors(board)){
+		printf("Error: board contains erroneous values\n");
+		return;
+	}
+	if (gurobi(board)==NULL){
+		printf("Validation failed: board is unsolvable\n");
+	}
+	else{
+		printf("Validation passed: board is solvable\n");
+	}
+}
 int doesBoardHaveErrors(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;

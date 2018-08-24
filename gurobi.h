@@ -11,13 +11,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "gurobi_c.h"
+#include "gameUtils.h"
 #include "ActionsHistory.h"
 #include "structs.h"
 
 
-void freeAll(GRBenv *env, GRBmodel *model, double* sol, int* ind, double* val, double* lb, char* vtype, SudokuBoard* solBoard);
-SudokuBoard* gurobi(SudokuGame* game, int m, int n);
-
+void freeAll(GRBenv *env, GRBmodel *model, double* sol, int* ind, double* val, double* lb, char* vtype);
+SudokuBoard* gurobi(SudokuBoard* board);
 
 
 #endif /* GUROBI_H_ */
