@@ -30,11 +30,20 @@ int parseit(SudokuGame* game, char* str){
 	int i;
 	int* a;
 	char *token;
+	SudokuBoard* test;
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
+
 	//SudokuBoard* test;
+
+	if(strlen(token)>256){
+		printf("ERROR: invalid command\n");
+		return 0;
+	}
+
+
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -115,6 +124,13 @@ int parseit(SudokuGame* game, char* str){
 		free(a);
 		return 0;
 	}
+	if(strcmp(token,"validate")==0){
+		if(game->gameMode==0){
+					printf("ERROR: invalid command\n");
+				}
+		validate(game->curBoard->board);
+		return 0;
+	}
 	if(strcmp(token,"undo")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
@@ -148,10 +164,17 @@ int parseit(SudokuGame* game, char* str){
 		return 1;
 	}
 	if(strcmp(token,"testSolve")==0){
-		//test=gurobi(game,game->curBoard->board->m,game->curBoard->board->n);
-		//sudokuBoardPrinter(test);
+
+		test= gurobi(game->curBoard->board);
+		if (test!=NULL){
+			printf("test!=null");
+			setBoard(game,test);
+		}
+		/*game->curBoard->board=test;*/
+
 		return 0;
 	}
+
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
@@ -160,6 +183,33 @@ int parseit(SudokuGame* game, char* str){
 			token = strtok(NULL, s);
 			saveBoardToFile(game, token);
 		}
+		return 0;
+	}
+	if(strcmp(token,"hint")==0){
+		if(game->gameMode!=1){ /* only in solve mode */
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+		a=(int*)calloc(2,sizeof(int));
+		if (!a){
+			printf("Error: problem while allocating memory");
+			return 1;
+		}
+
+		for(i=0;i<2;i++){
+			token = strtok(NULL, s);
+			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N)){
+				printf("Error: value not in range 0-%d\n",N);
+				free(a);
+				return 0;
+			}
+			a[i]=atoi(token);
+		}
+		hintXY(game->curBoard->board,a[0],a[1]);
+
+		free(a);
+		return 0;
+
 		return 0;
 	}
 
@@ -178,14 +228,6 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 
-	if (strcmp(token,"hint")==0){
-		printf("hint");
-		return 0;
-	}
-	if(strcmp(token,"validate")==0){
-		printf("validate");
-		return 0;
-	}
 	if(strcmp(token,"generate")==0){
 		printf("generate");
 		return 0;

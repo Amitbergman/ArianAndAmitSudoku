@@ -12,7 +12,9 @@
 #include "main.h"
 #include "printer.h"
 #include "ActionsHistory.h"
+#include "gurobi.h"
 #include "gameUtils.h"
+
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 /* TODO - function to free all memory of previous game
@@ -69,7 +71,19 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	sudokuBoardPrinter(game->curBoard->board);
 
 }
+void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
+	Node* node;
+	printf("m=%d, n=%d\n",newBoard->m,newBoard->n);
+
+	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
+	node=GetNewNode(newBoard); /* create new node for new board */
+	node->prev=game->curBoard; /* update prev and next */
+	game->curBoard->next=node;
+	game->curBoard=node;
+	/*sudokuBoardPrinter(game->curBoard->board);*/
+
+}
 void setXYZ(SudokuGame* game, int* a){
 
 	SudokuBoard* newBoard;
@@ -99,7 +113,40 @@ void setXYZ(SudokuGame* game, int* a){
 
 	return;
 }
-
+void validate(SudokuBoard* board){
+	if(doesBoardHaveErrors(board)){
+		printf("Error: board contains erroneous values\n");
+		return;
+	}
+	if (gurobi(board)==NULL){
+		printf("Validation failed: board is unsolvable\n");
+	}
+	else{
+		printf("Validation passed: board is solvable\n");
+	}
+}
+void hintXY(SudokuBoard* board, int x, int y){
+	SudokuBoard* solvedBoard=NULL;
+	if(doesBoardHaveErrors(board)){
+		printf("Error: board contains erroneous values\n");
+		return;
+	}
+	if(board->board[x-1][y-1].isFixed==1){
+		printf("Error: cell is fixed\n");
+		return;
+	}
+	if(board->board[x-1][y-1].content>0){
+		printf("Error: cell already contains a value\n");
+		return;
+	}
+	solvedBoard=gurobi(board);
+	if (solvedBoard==NULL){
+		printf("Error: board is unsolvable\n");
+	}
+	else{
+		printf("Hint: set cell to %d\n",solvedBoard->board[x-1][y-1].content);
+	}
+}
 int doesBoardHaveErrors(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;
@@ -188,6 +235,7 @@ int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
 		}
 	return counter;
 	}
+
 int getSingleValueToInsert(SudokuBoard* board, int row, int col){
 	int i=1;
 
@@ -213,14 +261,25 @@ int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
 	}
 	for (int i=0;i<N;i++){
 		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
+
+int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
+	int n,m,N,i;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (i=0;i<N;i++){
+		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
+			return 0;
+		}
+	}
+	for (i=0;i<N;i++){
+		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
+
 			return 0;
 		}
 	}
 
 	int x= checkValidInBox(board, row, col, n, m, valueToCheck);
-	if (x==1){
-		//printf("value %d is valid in cell %d %d \n", valueToCheck, row, col );
-	}
 	return x;
 
 
@@ -291,12 +350,12 @@ int boardHasErrors(SudokuBoard* board){
 	for (int i = 0;i<N;i++){
 		for (int j = 0; j<N;j++){
 			if (board->board[i][j].isError ==1){
-						return 1;
+						return 0;
 					}
 		}
-
 	}
-	return 0;
+return 1;}
 
 
-}
+
+
