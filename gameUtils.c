@@ -224,17 +224,44 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->curBoard=game->history->head;
 	sudokuBoardPrinter(game->curBoard->board);
 }
-int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
+int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
 	int i=1;
 	int counter = 0;
 	int m = board->m;
 	int n = board->n;
 	int N = n*m;
 	for (;i<=N;i++){
-		 counter += isLegalValue(board, col, row, i);
+		 counter += isLegalValue(board, row, col, i);
 		}
 	return counter;
 	}
+
+int getSingleValueToInsert(SudokuBoard* board, int row, int col){
+	int i=1;
+
+	int m = board->m;
+	int n = board->n;
+	int N = n*m;
+	for (;i<=N;i++){
+		 if (isLegalValue(board, row, col, i)==1){
+			 return i;
+		}
+
+	}
+	return -1;
+}
+int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
+	int n = board->n;
+	int m = board->m;
+	int N = n*m;
+	for (int i=0;i<N;i++){
+		if ((board->board[row][i].content==valueToCheck)&&(!(i==col))){
+			return 0;
+		}
+	}
+	for (int i=0;i<N;i++){
+		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
+
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	int n,m,N,i;
 	n = board->n;
@@ -247,22 +274,25 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	}
 	for (i=0;i<N;i++){
 		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
+
 			return 0;
 		}
 	}
-	return checkValidInBox(board, col, row, n, m, valueToCheck);
 
+	int x= checkValidInBox(board, row, col, n, m, valueToCheck);
+	return x;
 
 
 }
-int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
+int checkValidInBox(SudokuBoard* board, int row, int col, int n, int m, int valueToCheck){
 	 int startCol = (col/m)*m;
 	 int startRow = (row/n)*n;
-	 int i = startCol;
-	 int j = startRow;
-	 for (;i<startCol+m;i++){
-		 for (;j<startRow+n;j++){
-			 if (board->board[i][j].content==valueToCheck){
+	 int i = startRow;
+	 int j = startCol;
+	 for (;i<startRow+n;i++){
+		 j=startCol;
+		 for (;j<startCol+m;j++){
+			 if (board->board[i][j].content==valueToCheck&&((i!=row)||j!=col)){
 				 return 0;
 			 }
 		 }
@@ -270,4 +300,62 @@ int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valu
 	 return 1;
 
 }
+void autofill(SudokuGame* game){
+	if (boardHasErrors(game->curBoard->board)==1){
+		printf("Error: board contains erroneous values\n");
+		return;
+	}
+
+	int n = game->curBoard->board->n;
+	int m = game->curBoard->board->m;
+	int N = n*m;
+	SudokuBoard* newBoard;
+	Node* node;
+	newBoard=duplicateBoard(game->curBoard->board);
+
+	int somethingChanged=0;
+	for (int row = 0;row<N;row++){
+		for (int col = 0 ; col<N; col++){
+			if ((newBoard->board[row][col]).content==0)
+				{int x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, row,col);
+				//not sure about that - if there is 0 things to put here, does that counts for an erroneous?
+
+				if (x==1){
+						newBoard->board[row][col].content=getSingleValueToInsert(game->curBoard->board, row,col);
+						somethingChanged = 1;
+					}
+
+				}
+			}
+		}
+	//nothing is changed, just print the board and no other work
+	if (somethingChanged==0){
+		sudokuBoardPrinter(game->curBoard->board);
+		return;
+	}
+	printDiffsAutoFill(game->curBoard->board, newBoard);
+	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
+	node=GetNewNode(newBoard); /* create new node for new board */
+	node->prev=game->curBoard; /* update prev and next */
+	game->curBoard->next=node;
+	game->curBoard=node;
+
+	sudokuBoardPrinter(game->curBoard->board);
+}
+
+int boardHasErrors(SudokuBoard* board){
+	int n = board->n;
+	int m = board->m;
+	int N = n*m;
+	for (int i = 0;i<N;i++){
+		for (int j = 0; j<N;j++){
+			if (board->board[i][j].isError ==1){
+						return 0;
+					}
+		}
+	}
+return 1;}
+
+
+
 

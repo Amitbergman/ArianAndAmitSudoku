@@ -14,7 +14,7 @@
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
-#include "gurobi.h"
+
 
 
 int parseit(SudokuGame* game, char* str){
@@ -35,10 +35,14 @@ int parseit(SudokuGame* game, char* str){
 	token = strtok(str, s);
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
+
+	//SudokuBoard* test;
+
 	if(strlen(token)>256){
 		printf("ERROR: invalid command\n");
 		return 0;
 	}
+
 
 
 	if(strcmp(token,"solve")==0){
@@ -160,12 +164,14 @@ int parseit(SudokuGame* game, char* str){
 		return 1;
 	}
 	if(strcmp(token,"testSolve")==0){
+
 		test= gurobi(game->curBoard->board);
 		if (test!=NULL){
 			printf("test!=null");
 			setBoard(game,test);
 		}
 		/*game->curBoard->board=test;*/
+
 		return 0;
 	}
 
@@ -213,7 +219,12 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if (strcmp(token,"autofill")==0){
-		printf("autofill");
+		if (game->gameMode!=1)//game mode is not solve
+		{
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+		autofill(game);
 		return 0;
 	}
 

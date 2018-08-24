@@ -19,4 +19,6 @@ SudokuGame* initGameInInitMode();
 void changeToEmptyGameInEditMode(SudokuGame*);
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);
+void autofill(SudokuGame* game);
+int boardHasErrors(SudokuBoard* board);
 #endif /* GAMEUTILS_H_ */
