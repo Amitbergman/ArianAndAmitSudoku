@@ -125,6 +125,28 @@ void validate(SudokuBoard* board){
 		printf("Validation passed: board is solvable\n");
 	}
 }
+void hintXY(SudokuBoard* board, int x, int y){
+	SudokuBoard* solvedBoard=NULL;
+	if(doesBoardHaveErrors(board)){
+		printf("Error: board contains erroneous values\n");
+		return;
+	}
+	if(board->board[x-1][y-1].isFixed==1){
+		printf("Error: cell is fixed\n");
+		return;
+	}
+	if(board->board[x-1][y-1].content>0){
+		printf("Error: cell already contains a value\n");
+		return;
+	}
+	solvedBoard=gurobi(board);
+	if (solvedBoard==NULL){
+		printf("Error: board is unsolvable\n");
+	}
+	else{
+		printf("Hint: set cell to %d\n",solvedBoard->board[x-1][y-1].content);
+	}
+}
 int doesBoardHaveErrors(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;
@@ -214,15 +236,16 @@ int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	return counter;
 	}
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
-	int n = board->n;
-	int m = board->m;
-	int N = n*m;
-	for (int i=0;i<N;i++){
+	int n,m,N,i;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (i=0;i<N;i++){
 		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
 			return 0;
 		}
 	}
-	for (int i=0;i<N;i++){
+	for (i=0;i<N;i++){
 		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
 			return 0;
 		}
