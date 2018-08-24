@@ -17,9 +17,9 @@
 
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
-/* TODO - function to free all memory of previous game
- *
- */
+	/* TODO - function to free all memory of previous game
+	 *
+	 */
 	FILE * fp;
 	int n,m,N,i,j, curCellContent;
 	char* curChar;
@@ -56,7 +56,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			if (strcmp(curChar, ".")==0){
 				(*resBoard).board[i][j].isFixed=1;
 				fscanf(fp, "%c", curChar);
-				}
+			}
 			else{
 				(*resBoard).board[i][j].isFixed=0;
 			}
@@ -114,7 +114,7 @@ void setXYZ(SudokuGame* game, int* a){
 	return;
 }
 void validate(SudokuBoard* board){
-	if(doesBoardHaveErrors(board)){
+	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
@@ -127,7 +127,7 @@ void validate(SudokuBoard* board){
 }
 void hintXY(SudokuBoard* board, int x, int y){
 	SudokuBoard* solvedBoard=NULL;
-	if(doesBoardHaveErrors(board)){
+	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
@@ -147,22 +147,7 @@ void hintXY(SudokuBoard* board, int x, int y){
 		printf("Hint: set cell to %d\n",solvedBoard->board[x-1][y-1].content);
 	}
 }
-int doesBoardHaveErrors(SudokuBoard* board){
-	int n,m,N,i,j;
-	n = board->n;
-	m = board->m;
-	N = n*m;
-	i=0;
-	for (; i<N;i++){
-		j=0;
-		for (;j<N;j++){
-			if (board->board[i][j].isError==1){
-				return 1;
-			}
-		}
-	}
-	return 0;
-}
+
 
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	int m,n,N,i,j,a;
@@ -170,7 +155,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	m = game->curBoard->board->m;
 	n = game->curBoard->board->n;
 	N = n*m;
-	a = doesBoardHaveErrors(game->curBoard->board);
+	a = boardHasErrors(game->curBoard->board);
 	if (a==1 && game->gameMode==2){
 		printf("Error: board contains erroneous values\n");
 	}
@@ -231,10 +216,10 @@ int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
 	int n = board->n;
 	int N = n*m;
 	for (;i<=N;i++){
-		 counter += isLegalValue(board, row, col, i);
-		}
-	return counter;
+		counter += isLegalValue(board, row, col, i);
 	}
+	return counter;
+}
 
 int getSingleValueToInsert(SudokuBoard* board, int row, int col){
 	int i=1;
@@ -243,27 +228,15 @@ int getSingleValueToInsert(SudokuBoard* board, int row, int col){
 	int n = board->n;
 	int N = n*m;
 	for (;i<=N;i++){
-		 if (isLegalValue(board, row, col, i)==1){
-			 return i;
+		if (isLegalValue(board, row, col, i)==1){
+			return i;
 		}
 
 	}
 	return -1;
 }
 int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
-	int n = board->n;
-	int m = board->m;
-	int N = n*m;
-	for (int i=0;i<N;i++){
-		if ((board->board[row][i].content==valueToCheck)&&(!(i==col))){
-			return 0;
-		}
-	}
-	for (int i=0;i<N;i++){
-		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
-
-int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
-	int n,m,N,i;
+	int n,m,N,i,x;
 	n = board->n;
 	m = board->m;
 	N = n*m;
@@ -274,60 +247,62 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	}
 	for (i=0;i<N;i++){
 		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
-
 			return 0;
 		}
 	}
 
-	int x= checkValidInBox(board, row, col, n, m, valueToCheck);
+	x= checkValidInBox(board, row, col, n, m, valueToCheck);
 	return x;
-
 
 }
 int checkValidInBox(SudokuBoard* board, int row, int col, int n, int m, int valueToCheck){
-	 int startCol = (col/m)*m;
-	 int startRow = (row/n)*n;
-	 int i = startRow;
-	 int j = startCol;
-	 for (;i<startRow+n;i++){
-		 j=startCol;
-		 for (;j<startCol+m;j++){
-			 if (board->board[i][j].content==valueToCheck&&((i!=row)||j!=col)){
-				 return 0;
-			 }
-		 }
-	 }
-	 return 1;
+	int startCol = (col/m)*m;
+	int startRow = (row/n)*n;
+	int i = startRow;
+	int j = startCol;
+	for (;i<startRow+n;i++){
+		j=startCol;
+		for (;j<startCol+m;j++){
+			if (board->board[i][j].content==valueToCheck&&((i!=row)||j!=col)){
+				return 0;
+			}
+		}
+	}
+	return 1;
 
 }
 void autofill(SudokuGame* game){
+	int n,m,N, somethingChanged, row, col,x;
+	SudokuBoard* newBoard;
+	Node* node;
+
 	if (boardHasErrors(game->curBoard->board)==1){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
 
-	int n = game->curBoard->board->n;
-	int m = game->curBoard->board->m;
-	int N = n*m;
-	SudokuBoard* newBoard;
-	Node* node;
+	n = game->curBoard->board->n;
+	m = game->curBoard->board->m;
+	N = n*m;
+
 	newBoard=duplicateBoard(game->curBoard->board);
 
-	int somethingChanged=0;
-	for (int row = 0;row<N;row++){
-		for (int col = 0 ; col<N; col++){
+	somethingChanged=0;
+	for (row = 0;row<N;row++){
+		for (col = 0 ; col<N; col++){
 			if ((newBoard->board[row][col]).content==0)
-				{int x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, row,col);
-				//not sure about that - if there is 0 things to put here, does that counts for an erroneous?
+			{
+				x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, row,col);
+				/*not sure about that - if there is 0 things to put here, does that counts for an erroneous? */
 
 				if (x==1){
-						newBoard->board[row][col].content=getSingleValueToInsert(game->curBoard->board, row,col);
-						somethingChanged = 1;
-					}
-
+					newBoard->board[row][col].content=getSingleValueToInsert(game->curBoard->board, row,col);
+					somethingChanged = 1;
 				}
+
 			}
 		}
+	}
 	//nothing is changed, just print the board and no other work
 	if (somethingChanged==0){
 		sudokuBoardPrinter(game->curBoard->board);
@@ -350,11 +325,12 @@ int boardHasErrors(SudokuBoard* board){
 	for (int i = 0;i<N;i++){
 		for (int j = 0; j<N;j++){
 			if (board->board[i][j].isError ==1){
-						return 0;
-					}
+				return 0;
+			}
 		}
 	}
-return 1;}
+	return 1;
+}
 
 
 
