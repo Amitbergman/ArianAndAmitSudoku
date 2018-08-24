@@ -64,6 +64,22 @@ void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 		}
 	}
 }
+void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
+	int i,j,N,z1,z2;
+	i=0;
+	N=(boardA->m)*(boardA->n);
+
+	for (;i<N;i++){
+		j=0;
+		for (;j<N;j++){
+			z1=boardA->board[i][j].content;
+			z2=boardB->board[i][j].content;
+			if (z1!=z2){
+				printf("cell %d,%d set to %d\n",i+1,j+1,z2);
+			}
+		}
+	}
+}
 
 
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
