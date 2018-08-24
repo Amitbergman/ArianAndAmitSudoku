@@ -12,6 +12,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
 void setBoard(SudokuGame* game, SudokuBoard* newBoard);
 void setXYZ(SudokuGame* game, int* a);
 void validate(SudokuBoard* board);
+void hintXY(SudokuBoard* board, int x, int y);
 int doesBoardHaveErrors(SudokuBoard* board);
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 SudokuGame* initGameInInitMode();

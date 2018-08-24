@@ -74,7 +74,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
 	Node* node;
-	printf("m=%d, n=%d\n",newBoard->m,newBoard->n);
+	/* printf("m=%d, n=%d\n",newBoard->m,newBoard->n); */
 
 	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
 	node=GetNewNode(newBoard); /* create new node for new board */
