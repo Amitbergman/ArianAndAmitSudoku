@@ -16,4 +16,6 @@ int doesBoardHaveErrors(SudokuBoard* board);
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 SudokuGame* initGameInInitMode();
 void changeToEmptyGameInEditMode(SudokuGame*);
+int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
+int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);
 #endif /* GAMEUTILS_H_ */
