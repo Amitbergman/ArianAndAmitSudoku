@@ -176,10 +176,11 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 
 	if (game->gameMode==2){
-		/* validateTheBoard and exit if not valid after printing not valid
-		 * Error: board validation failed\n
-		 *
-		 */
+		if (gurobi(game->curBoard->board)==NULL){
+			printf("Error: board validation failed\n");
+			return;
+		}
+
 	}
 
 	fp = fopen(fileToOpen, "w");
