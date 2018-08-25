@@ -112,14 +112,7 @@ void setXYZ(SudokuGame* game, int* a){
 
 	if (game->gameMode==1){
 		if (boardIsFull(game->curBoard->board)==1){
-			if (boardHasErrors(game->curBoard->board)==1){
-				printf("Puzzle solution erroneous\n");
-				game->onlyUndoAfterSolvedWithErrors=1;
-			}
-			else{
-				printf("Puzzle solved successfully\n");
-				game = initGameInInitMode();
-			}
+			dealWithFullBoard(game);
 		}
 	}
 
@@ -339,9 +332,11 @@ void autofill(SudokuGame* game){
 	game->curBoard->next=node;
 	game->curBoard=node;
 
-	//check if solved;
 
 	sudokuBoardPrinter(game);
+	if (boardIsFull(game->curBoard->board)){
+		dealWithFullBoard(game);
+	}
 }
 
 int boardHasErrors(SudokuBoard* board){
@@ -409,7 +404,18 @@ int boardIsEmpty(SudokuBoard* board){
 	}
 	return 1;
 }
+void dealWithFullBoard(SudokuGame* game){
+	if (boardHasErrors(game->curBoard->board)==1){
+		printf("Puzzle solution erroneous\n");
+		game->onlyUndoAfterSolvedWithErrors=1;
+	}
+	else{
+		printf("Puzzle solved successfully\n");
 
+		//TODO: free all memory of solved board
+		game = initGameInInitMode();
+	}
+}
 
 
 
