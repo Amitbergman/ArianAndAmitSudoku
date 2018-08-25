@@ -179,6 +179,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	a = boardHasErrors(game->curBoard->board);
 	if (a==1 && game->gameMode==2){
 		printf("Error: board contains erroneous values\n");
+		return;
 	}
 
 	if (game->gameMode==2){
@@ -200,7 +201,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		j=0;
 		for (; j<N;j++){
 			fprintf(fp, "%d", (game->curBoard->board->board)[i][j].content);
-			if ((game->curBoard->board->board)[i][j].isFixed){
+			if ((game->curBoard->board->board)[i][j].isFixed || (game->gameMode==2 && game->curBoard->board->board[i][j].content!=0)){
 				fprintf(fp, ".");
 			}
 			if (j==N-1){
@@ -211,6 +212,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		}
 	}
 	fclose(fp);
+	printf("Saved to: %s\n",fileToOpen);
 	sudokuBoardPrinter(game);
 }
 

@@ -197,11 +197,15 @@ int parseit(SudokuGame* game, char* str){
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
+			return 0;
 		}
-		else{
-			token = strtok(NULL, s);
-			saveBoardToFile(game, token);
+		token = strtok(NULL, s);
+		if (token == NULL){
+			printf("ERROR: invalid command\n");
+			return 0;
 		}
+		saveBoardToFile(game, token);
+
 		return 0;
 	}
 	if(strcmp(token,"hint")==0){
