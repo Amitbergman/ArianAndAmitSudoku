@@ -25,7 +25,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
 	(*game).gameMode = mode;
-	(*game).markErrors = 0;
+
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
