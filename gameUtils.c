@@ -50,7 +50,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			(*resBoard).board[i][j].content=curCellContent;
 			(*resBoard).board[i][j].isError=0;
 			fscanf(fp, "%c", curChar);
-			if (strcmp(curChar, ".")==0){
+			if (strcmp(curChar, ".")==0&&game->gameMode!=2){
 				(*resBoard).board[i][j].isFixed=1;
 				fscanf(fp, "%c", curChar);
 			}
@@ -175,13 +175,13 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		return;
 	}
 
-	if (game->gameMode==2){
-		if (gurobi(game->curBoard->board)==NULL){
-			printf("Error: board validation failed\n");
-			return;
-		}
+	//if (game->gameMode==2){
+		//if (gurobi(game->curBoard->board)==NULL){
+			//printf("Error: board validation failed\n");
+			//return;
+	//	}
 
-	}
+	//}
 
 	fp = fopen(fileToOpen, "w");
 	if (!fp){
@@ -333,7 +333,7 @@ void autofill(SudokuGame* game){
 	game->curBoard->next=node;
 	game->curBoard=node;
 
-
+	updateErrorsInBoard(game->curBoard->board);
 	sudokuBoardPrinter(game);
 	if (boardIsFull(game->curBoard->board)){
 		dealWithFullBoard(game);
