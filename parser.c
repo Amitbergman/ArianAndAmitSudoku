@@ -46,6 +46,16 @@ int parseit(SudokuGame* game, char* str){
 	if(token==NULL){
 		return 0;
 	}
+	if(game->onlyUndoAfterSolvedWithErrors==1){
+		if(strcmp(token,"undo")==0){
+			game->onlyUndoAfterSolvedWithErrors=0;
+			undo(game);
+		}
+		else{
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+	}
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
