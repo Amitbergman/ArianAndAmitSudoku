@@ -65,6 +65,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard->next=NULL;
 	game->curBoard->prev = NULL;
 	game->history->head = game->curBoard;
+	updateErrorsInBoard(game->curBoard->board);
 	sudokuBoardPrinter(game);
 
 }
@@ -82,6 +83,10 @@ void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
 }
 void setXYZ(SudokuGame* game, int* a){
+	int temp;
+	temp=a[0];
+	a[0]=a[1];
+	a[1]=temp;
 
 	SudokuBoard* newBoard;
 	Node* node;
@@ -139,6 +144,10 @@ void validate(SudokuBoard* board){
 }
 void hintXY(SudokuBoard* board, int x, int y){
 	SudokuBoard* solvedBoard=NULL;
+	int temp;
+	temp=x;
+	x=y;
+	y=temp;
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
