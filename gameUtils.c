@@ -33,9 +33,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		return;
 	}
 
-	/* Now the Buffer Has all the data from the file
-	 *
-	 */
 	n =0;
 	m =0 ;
 	fscanf(fp, "%d %d\n", &m,  &n);
@@ -68,7 +65,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard->next=NULL;
 	game->curBoard->prev = NULL;
 	game->history->head = game->curBoard;
-	sudokuBoardPrinter(game->curBoard->board);
+	sudokuBoardPrinter(game);
 
 }
 void setBoard(SudokuGame* game, SudokuBoard* newBoard){
@@ -99,12 +96,14 @@ void setXYZ(SudokuGame* game, int* a){
 	newBoard=duplicateBoard(game->curBoard->board);
 	newBoard->board[a[0]-1][a[1]-1].content=a[2]; /* set board[x][y]=z */
 
+	updateErrorsInBoard(newBoard);
+
 	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
 	node=GetNewNode(newBoard); /* create new node for new board */
 	node->prev=game->curBoard; /* update prev and next */
 	game->curBoard->next=node;
 	game->curBoard=node;
-	sudokuBoardPrinter(game->curBoard->board); /*print */
+	sudokuBoardPrinter(game); /*print */
 
 
 	/* TODO if ((game.mode==1)&&(validate(game)==0)||boardIsFull(game)){print puzzle solutions successfully/erroneous}
@@ -190,7 +189,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		}
 	}
 	fclose(fp);
-	sudokuBoardPrinter(game->curBoard->board);
+	sudokuBoardPrinter(game);
 }
 
 SudokuGame* initGameInInitMode(){
@@ -207,7 +206,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
 	InsertAtHead(game->history,newEmptyBoard());
 	game->curBoard=game->history->head;
-	sudokuBoardPrinter(game->curBoard->board);
+	sudokuBoardPrinter(game);
 }
 int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
 	int i=1;
@@ -241,12 +240,12 @@ int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
 	m = board->m;
 	N = n*m;
 	for (i=0;i<N;i++){
-		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
+		if ((board->board[row][i].content==valueToCheck)&&(!(i==col))){
 			return 0;
 		}
 	}
 	for (i=0;i<N;i++){
-		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
+		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
 			return 0;
 		}
 	}
@@ -305,7 +304,7 @@ void autofill(SudokuGame* game){
 	}
 	//nothing is changed, just print the board and no other work
 	if (somethingChanged==0){
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 		return;
 	}
 	printDiffsAutoFill(game->curBoard->board, newBoard);
@@ -315,7 +314,7 @@ void autofill(SudokuGame* game){
 	game->curBoard->next=node;
 	game->curBoard=node;
 
-	sudokuBoardPrinter(game->curBoard->board);
+	sudokuBoardPrinter(game);
 }
 
 int boardHasErrors(SudokuBoard* board){
@@ -325,12 +324,37 @@ int boardHasErrors(SudokuBoard* board){
 	for (int i = 0;i<N;i++){
 		for (int j = 0; j<N;j++){
 			if (board->board[i][j].isError ==1){
-				return 0;
+				return 1;
 			}
 		}
 	}
-	return 1;
+	return 0;
 }
+void updateErrorsInBoard(SudokuBoard* board){
+	int n, m, N,i,j, error, curValue;
+	i=0;
+	j=0;
+	error=0;
+	curValue = 0;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (;i<N;i++){
+		j=0;
+		for (;j<N;j++){
+			curValue = board->board[i][j].content;
+			if (curValue!=0){
+				error = !isLegalValue(board, i, j, curValue );
+				board->board[i][j].isError = error;
+			}
+			else{
+				board->board[i][j].isError = 0;
+			}
+		}
+	}
+
+}
+
 
 
 

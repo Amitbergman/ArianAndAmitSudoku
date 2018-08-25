@@ -15,11 +15,11 @@
 #include "structs.h"
 
 
-void printSeperatorRow (int n, int N)
+void printSeperatorRow (int m, int N)
 {
 	/*Prints the delimeter between rows */
 	int i = 0;
-	for (; i < 4 * N + n + 1; i++)
+	for (; i < 4 * N + m + 1; i++)
 	{
 		printf ("-");
 	}
@@ -54,7 +54,7 @@ void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkErrorsSetToOne)
 	}
 }
 
-void printRealRow (SudokuBoard * boardPointer, int rowToPrint)
+void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors)
 {
 
 	int i,n,m,N, column;
@@ -70,7 +70,7 @@ void printRealRow (SudokuBoard * boardPointer, int rowToPrint)
 			printf ("|");
 		}
 		else {
-			printCell (sudboard.board[rowToPrint][column], 0);
+			printCell (sudboard.board[rowToPrint][column], markErrors);
 			column ++;
 		}
 	}
@@ -90,26 +90,32 @@ SudokuCell* createNewCell(int content, int isFixed, int isError){
 	}
 }
 
-void sudokuBoardPrinter (SudokuBoard * boardPointer)
+void sudokuBoardPrinter (SudokuGame * game)
 {
 
-	int i,n,m,N, row;
-	SudokuBoard board = *boardPointer;
-	n = board.n;
-	m = board.m;
+	int i,n,m,N, row, markErrors;
+	SudokuBoard* board;
+	board = game->curBoard->board;
+
+	n = board->n;
+	m = board->m;
 	N = n * m;
 	row = 0;
 	i = 0;
+	markErrors = 0;
+	if (game->markErrors==1 || game->gameMode==2){
+		markErrors=1;
+	}
 
 	for (; i < N + n + 1; i++)
 	{
 
 		if (i % (m + 1) == 0)
-			printSeperatorRow (n, N);
+			printSeperatorRow (m, N);
 
 		else
 		{
-			printRealRow (&board, row);
+			printRealRow (board, row, markErrors);
 			row++;
 		}
 		printf ("\n");

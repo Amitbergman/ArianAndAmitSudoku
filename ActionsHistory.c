@@ -156,7 +156,7 @@ void undo (SudokuGame* game){
 	else{
 		game->curBoard=nodeBoard;
 		printDiffs(game->curBoard->next->board, game->curBoard->board, "Undo");
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 	}
 	return;
 }
@@ -168,7 +168,7 @@ void redo (SudokuGame* game){
 	else{
 		game->curBoard=nodeBoard;
 		printDiffs(game->curBoard->prev->board, game->curBoard->board, "Redo");
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 	}
 	return;
 }

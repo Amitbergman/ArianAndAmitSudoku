@@ -21,4 +21,5 @@ int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valu
 void autofill(SudokuGame* game);
 int boardHasErrors(SudokuBoard* board);
 void hintXY(SudokuBoard* board, int x, int y);
+void updateErrorsInBoard(SudokuBoard* board);
 #endif /* GAMEUTILS_H_ */

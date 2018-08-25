@@ -37,7 +37,8 @@ int parseit(SudokuGame* game, char* str){
 
 
 	//SudokuBoard* test;
-
+	//Amit: I am not sure about it, isnt it say  that the first word of the input is in size 256?
+	//I think they told us that if all the line is longer than 256 then we can ignore the input
 	if(strlen(token)>256){
 		printf("ERROR: invalid command\n");
 		return 0;
@@ -94,7 +95,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 		}
 		else{
-			sudokuBoardPrinter(game->curBoard->board);
+			sudokuBoardPrinter(game);
 		}
 		return 0;
 	}
@@ -170,7 +171,6 @@ int parseit(SudokuGame* game, char* str){
 			printf("test!=null");
 			setBoard(game,test);
 		}
-		/*game->curBoard->board=test;*/
 
 		return 0;
 	}
@@ -210,7 +210,6 @@ int parseit(SudokuGame* game, char* str){
 		free(a);
 		return 0;
 
-		return 0;
 	}
 
 	if (strcmp(token,"num_solutions")==0){
