@@ -20,4 +20,5 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);
 void autofill(SudokuGame* game);
 int boardHasErrors(SudokuBoard* board);
+void hintXY(SudokuBoard* board, int x, int y);
 #endif /* GAMEUTILS_H_ */
