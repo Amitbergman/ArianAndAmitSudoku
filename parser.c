@@ -232,27 +232,31 @@ int parseit(SudokuGame* game, char* str){
 
 	if(strcmp(token,"generate")==0){
 		if(game->gameMode!=2){ /* only in edit mode */
-					printf("ERROR: invalid command\n");
-					return 0;
-				}
-				a=(int*)calloc(2,sizeof(int));
-				if (!a){
-					printf("Error: problem while allocating memory");
-					return 1;
-				}
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+		if(boardIsEmpty==0){ /* if board is not empty*/
+			printf("ERROR: board is not empty\n");
+			return 0;
+		}
+		a=(int*)calloc(2,sizeof(int));
+		if (!a){
+			printf("Error: problem while allocating memory");
+			return 1;
+		}
 
-				for(i=0;i<2;i++){
-					token = strtok(NULL, s);
-					if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
-						printf("Error: value not in range 0-%d\n",N*N);
-						free(a);
-						return 0;
-					}
-					a[i]=atoi(token);
-				}
-				hintXY(game->curBoard->board,a[0],a[1]);
-
+		for(i=0;i<2;i++){
+			token = strtok(NULL, s);
+			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
+				printf("Error: value not in range 0-%d\n",N*N);
 				free(a);
+				return 0;
+			}
+			a[i]=atoi(token);
+		}
+		generateXY(game->curBoard->board,a[0],a[1]);
+
+		free(a);
 		return 0;
 	}
 	printf("ERROR: invalid command\n");

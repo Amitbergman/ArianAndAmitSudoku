@@ -22,4 +22,5 @@ void autofill(SudokuGame* game);
 int boardHasErrors(SudokuBoard* board);
 int boardIsFull(SudokuBoard* board);
 int boardIsEmpty(SudokuBoard* board);
+int generateXY(SudokuBoard* board,int x, int y);
 #endif /* GAMEUTILS_H_ */

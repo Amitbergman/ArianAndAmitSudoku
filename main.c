@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 #include "main.h"
 #include "structs.h"
 #include "printer.h"
@@ -42,6 +43,7 @@ int startGame(){
 }
 int main ()
 {	SP_BUFF_SET();
+	srand(time(NULL));
 	printf("Sudoku\n------\n");
 	startGame();
 	return 0;
