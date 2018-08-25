@@ -30,7 +30,7 @@ int parseit(SudokuGame* game, char* str){
 	int i;
 	int* a;
 	char *token;
-	SudokuBoard* test;
+	/*SudokuBoard* test;*/
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
@@ -43,8 +43,9 @@ int parseit(SudokuGame* game, char* str){
 		printf("ERROR: invalid command\n");
 		return 0;
 	}
-
-
+	if(token==NULL){
+		return 0;
+	}
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -164,6 +165,7 @@ int parseit(SudokuGame* game, char* str){
 		printf("Exiting...\n");
 		return 1;
 	}
+	/*
 	if(strcmp(token,"testSolve")==0){
 
 		test= gurobi(game->curBoard->board);
@@ -171,9 +173,16 @@ int parseit(SudokuGame* game, char* str){
 			printf("test!=null");
 			setBoard(game,test);
 		}
+<<<<<<< HEAD
 
+=======
+		*/
+		/*game->curBoard->board=test;*/
+		/*
+>>>>>>> c0a095d1d50518756d856133a009965d3aaf28e9
 		return 0;
 	}
+	*/
 
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
@@ -228,7 +237,28 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if(strcmp(token,"generate")==0){
-		printf("generate");
+		if(game->gameMode!=2){ /* only in edit mode */
+					printf("ERROR: invalid command\n");
+					return 0;
+				}
+				a=(int*)calloc(2,sizeof(int));
+				if (!a){
+					printf("Error: problem while allocating memory");
+					return 1;
+				}
+
+				for(i=0;i<2;i++){
+					token = strtok(NULL, s);
+					if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
+						printf("Error: value not in range 0-%d\n",N*N);
+						free(a);
+						return 0;
+					}
+					a[i]=atoi(token);
+				}
+				hintXY(game->curBoard->board,a[0],a[1]);
+
+				free(a);
 		return 0;
 	}
 	printf("ERROR: invalid command\n");

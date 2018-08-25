@@ -354,7 +354,34 @@ void updateErrorsInBoard(SudokuBoard* board){
 	}
 
 }
-
+int boardIsFull(SudokuBoard* board){
+	int n,m,N,i,j;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (i = 0;i<N;i++){
+		for (j = 0; j<N;j++){
+			if (board->board[i][j].content==0){
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+int boardIsEmpty(SudokuBoard* board){
+	int n,m,N,i,j;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (i = 0;i<N;i++){
+		for (j = 0; j<N;j++){
+			if (board->board[i][j].content>0){
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
 
 
 
