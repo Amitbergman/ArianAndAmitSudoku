@@ -1,7 +1,7 @@
 /*
  * structs.h
  *
- *  Created on: 17 באוג 2018
+ *  Created on: 17 ×‘×�×•×’ 2018
  *      Author: arian
  */
 
@@ -39,6 +39,7 @@ typedef struct SudokuGame
 	int markErrors;
 	List *history;
 	Node *curBoard;
+	int onlyUndoAfterSolvedWithErrors;
 
 } SudokuGame;
 

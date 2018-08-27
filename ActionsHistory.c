@@ -59,7 +59,17 @@ void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 			z1=boardA->board[i][j].content;
 			z2=boardB->board[i][j].content;
 			if (z1!=z2){
+				if (z1==0){
+					printf("%s %d,%d: from %c to %d\n",undoRedo,i+1,j+1,'_',z2);
+					return;
+				}
+				if (z2==0){
+					printf("%s %d,%d: from %d to %c\n",undoRedo,i+1,j+1,z1,'_');
+					return;
+				}
 				printf("%s %d,%d: from %d to %d\n",undoRedo,i+1,j+1,z1,z2);
+				return;
+
 			}
 		}
 	}
@@ -128,6 +138,17 @@ void InsertAtTail(List *list,SudokuBoard* x) {
 	temp->next = newNode;
 	newNode->prev = temp;
 }
+/* Inserts a new Node after curNode and cleans next nodes
+ *
+ */
+void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard) {
+	Node* node;
+	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
+	node=GetNewNode(newBoard); /* create new node for new board */
+	node->prev=game->curBoard; /* update prev and next */
+	game->curBoard->next=node;
+	game->curBoard=node;
+}
 void cleanNextNodes (Node* node){
 	Node* next;
 	if (node==NULL){
@@ -156,7 +177,7 @@ void undo (SudokuGame* game){
 	else{
 		game->curBoard=nodeBoard;
 		printDiffs(game->curBoard->next->board, game->curBoard->board, "Undo");
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 	}
 	return;
 }
@@ -168,7 +189,7 @@ void redo (SudokuGame* game){
 	else{
 		game->curBoard=nodeBoard;
 		printDiffs(game->curBoard->prev->board, game->curBoard->board, "Redo");
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 	}
 	return;
 }

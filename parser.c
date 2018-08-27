@@ -36,7 +36,12 @@ int parseit(SudokuGame* game, char* str){
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
 
-	//SudokuBoard* test;
+	/*SudokuBoard* test;
+	 * Amit: I am not sure about it, isnt it say  that the first
+	 *  word of the input is in size 256?
+	 *  I think they told us that if all the line is longer than 256
+	 *   then we can ignore the input
+	 */
 
 	if(strlen(token)>256){
 		printf("ERROR: invalid command\n");
@@ -44,6 +49,16 @@ int parseit(SudokuGame* game, char* str){
 	}
 	if(token==NULL){
 		return 0;
+	}
+	if(game->onlyUndoAfterSolvedWithErrors==1){
+		if(strcmp(token,"undo")==0){
+			game->onlyUndoAfterSolvedWithErrors=0;
+			undo(game);
+		}
+		else{
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
 	}
 
 	if(strcmp(token,"solve")==0){
@@ -95,7 +110,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 		}
 		else{
-			sudokuBoardPrinter(game->curBoard->board);
+			sudokuBoardPrinter(game);
 		}
 		return 0;
 	}
@@ -172,6 +187,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("test!=null");
 			setBoard(game,test);
 		}
+
 		*/
 		/*game->curBoard->board=test;*/
 		/*
@@ -182,11 +198,15 @@ int parseit(SudokuGame* game, char* str){
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
+			return 0;
 		}
-		else{
-			token = strtok(NULL, s);
-			saveBoardToFile(game, token);
+		token = strtok(NULL, s);
+		if (token == NULL){
+			printf("ERROR: invalid command\n");
+			return 0;
 		}
+		saveBoardToFile(game, token);
+
 		return 0;
 	}
 	if(strcmp(token,"hint")==0){
@@ -213,6 +233,7 @@ int parseit(SudokuGame* game, char* str){
 
 		free(a);
 		return 0;
+
 	}
 
 	if (strcmp(token,"num_solutions")==0){
@@ -221,7 +242,7 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if (strcmp(token,"autofill")==0){
-		if (game->gameMode!=1)//game mode is not solve
+		if (game->gameMode!=1)	/*game mode is not solve */
 		{
 			printf("ERROR: invalid command\n");
 			return 0;
@@ -235,7 +256,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
-		if(boardIsEmpty==0){ /* if board is not empty*/
+		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
 			printf("ERROR: board is not empty\n");
 			return 0;
 		}
@@ -254,7 +275,7 @@ int parseit(SudokuGame* game, char* str){
 			}
 			a[i]=atoi(token);
 		}
-		generateXY(game->curBoard->board,a[0],a[1]);
+		generateXY(game,a[0],a[1]);
 
 		free(a);
 		return 0;

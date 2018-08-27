@@ -23,6 +23,7 @@ Node* GetNewNode(SudokuBoard* x);
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt);
 void InsertAtHead(List* list,SudokuBoard* newContent);
 void InsertAtTail(List *list,SudokuBoard* x);
+void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard);
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard);
 void undo (SudokuGame* game);
 void redo (SudokuGame* game);

@@ -34,7 +34,9 @@ int startGame(){
 	while (exit==0){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
-		exit=parseit(game,input);
+		if (strcmp(input, "\n")!=0){
+			exit=parseit(game,input);
+		}
 	}
 	/* TODO - free all the list of boards
 	 * TODO - free the game

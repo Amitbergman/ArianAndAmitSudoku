@@ -13,6 +13,7 @@
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "gurobi.h"
+
 #include "gameUtils.h"
 
 
@@ -33,9 +34,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		return;
 	}
 
-	/* Now the Buffer Has all the data from the file
-	 *
-	 */
 	n =0;
 	m =0 ;
 	fscanf(fp, "%d %d\n", &m,  &n);
@@ -53,7 +51,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			(*resBoard).board[i][j].content=curCellContent;
 			(*resBoard).board[i][j].isError=0;
 			fscanf(fp, "%c", curChar);
-			if (strcmp(curChar, ".")==0){
+			if (strcmp(curChar, ".")==0&&game->gameMode!=2){
 				(*resBoard).board[i][j].isFixed=1;
 				fscanf(fp, "%c", curChar);
 			}
@@ -68,26 +66,20 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard->next=NULL;
 	game->curBoard->prev = NULL;
 	game->history->head = game->curBoard;
-	sudokuBoardPrinter(game->curBoard->board);
+	updateErrorsInBoard(game->curBoard->board);
+	sudokuBoardPrinter(game);
 
 }
-void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
-	Node* node;
-	/* printf("m=%d, n=%d\n",newBoard->m,newBoard->n); */
-
-	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
-	node=GetNewNode(newBoard); /* create new node for new board */
-	node->prev=game->curBoard; /* update prev and next */
-	game->curBoard->next=node;
-	game->curBoard=node;
-	/*sudokuBoardPrinter(game->curBoard->board);*/
-
-}
 void setXYZ(SudokuGame* game, int* a){
-
+	int temp;
 	SudokuBoard* newBoard;
-	Node* node;
+
+	temp=a[0];
+	a[0]=a[1];
+	a[1]=temp;
+
+
 	if ((game->gameMode==1)&&(game->curBoard->board->board[a[0]-1][a[1]-1].isFixed==1)){ /* value fixed in solve mode */
 		printf("Error: cell is fixed\n");
 		return;
@@ -99,12 +91,17 @@ void setXYZ(SudokuGame* game, int* a){
 	newBoard=duplicateBoard(game->curBoard->board);
 	newBoard->board[a[0]-1][a[1]-1].content=a[2]; /* set board[x][y]=z */
 
-	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
-	node=GetNewNode(newBoard); /* create new node for new board */
-	node->prev=game->curBoard; /* update prev and next */
-	game->curBoard->next=node;
-	game->curBoard=node;
-	sudokuBoardPrinter(game->curBoard->board); /*print */
+	updateErrorsInBoard(newBoard);
+
+	InsertBoardNextNode(game,newBoard);
+
+	sudokuBoardPrinter(game); /*print */
+
+	if (game->gameMode==1){
+		if (boardIsFull(game->curBoard->board)==1){
+			dealWithFullBoard(game);
+		}
+	}
 
 
 	/* TODO if ((game.mode==1)&&(validate(game)==0)||boardIsFull(game)){print puzzle solutions successfully/erroneous}
@@ -127,6 +124,10 @@ void validate(SudokuBoard* board){
 }
 void hintXY(SudokuBoard* board, int x, int y){
 	SudokuBoard* solvedBoard=NULL;
+	int temp;
+	temp=x;
+	x=y;
+	y=temp;
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
@@ -158,14 +159,17 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	a = boardHasErrors(game->curBoard->board);
 	if (a==1 && game->gameMode==2){
 		printf("Error: board contains erroneous values\n");
+		return;
 	}
 
+	/*
 	if (game->gameMode==2){
-		/* validateTheBoard and exit if not valid after printing not valid
-		 * Error: board validation failed\n
-		 *
-		 */
+		if (gurobi(game->curBoard->board)==NULL){
+			printf("Error: board validation failed\n");
+			return;
+		}
 	}
+	*/
 
 	fp = fopen(fileToOpen, "w");
 	if (!fp){
@@ -179,7 +183,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		j=0;
 		for (; j<N;j++){
 			fprintf(fp, "%d", (game->curBoard->board->board)[i][j].content);
-			if ((game->curBoard->board->board)[i][j].isFixed){
+			if ((game->curBoard->board->board)[i][j].isFixed || (game->gameMode==2 && game->curBoard->board->board[i][j].content!=0)){
 				fprintf(fp, ".");
 			}
 			if (j==N-1){
@@ -190,7 +194,8 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		}
 	}
 	fclose(fp);
-	sudokuBoardPrinter(game->curBoard->board);
+	printf("Saved to: %s\n",fileToOpen);
+	sudokuBoardPrinter(game);
 }
 
 SudokuGame* initGameInInitMode(){
@@ -199,6 +204,7 @@ SudokuGame* initGameInInitMode(){
 	game->markErrors=0;
 	game->history=(List*)calloc(1,sizeof(List));
 	game->curBoard=GetNewNode(newEmptyBoard());
+	game->onlyUndoAfterSolvedWithErrors=0;
 
 	return game;
 }
@@ -207,7 +213,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
 	InsertAtHead(game->history,newEmptyBoard());
 	game->curBoard=game->history->head;
-	sudokuBoardPrinter(game->curBoard->board);
+	sudokuBoardPrinter(game);
 }
 int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
 	int i=1;
@@ -241,12 +247,12 @@ int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
 	m = board->m;
 	N = n*m;
 	for (i=0;i<N;i++){
-		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
+		if ((board->board[row][i].content==valueToCheck)&&(!(i==col))){
 			return 0;
 		}
 	}
 	for (i=0;i<N;i++){
-		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
+		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
 			return 0;
 		}
 	}
@@ -303,9 +309,9 @@ void autofill(SudokuGame* game){
 			}
 		}
 	}
-	//nothing is changed, just print the board and no other work
+	/* nothing is changed, just print the board and no other work */
 	if (somethingChanged==0){
-		sudokuBoardPrinter(game->curBoard->board);
+		sudokuBoardPrinter(game);
 		return;
 	}
 	printDiffsAutoFill(game->curBoard->board, newBoard);
@@ -315,21 +321,50 @@ void autofill(SudokuGame* game){
 	game->curBoard->next=node;
 	game->curBoard=node;
 
-	sudokuBoardPrinter(game->curBoard->board);
+	updateErrorsInBoard(game->curBoard->board);
+	sudokuBoardPrinter(game);
+	if (boardIsFull(game->curBoard->board)){
+		dealWithFullBoard(game);
+	}
 }
 
 int boardHasErrors(SudokuBoard* board){
-	int n = board->n;
-	int m = board->m;
-	int N = n*m;
-	for (int i = 0;i<N;i++){
-		for (int j = 0; j<N;j++){
+	int i,j,n,m,N;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (i = 0;i<N;i++){
+		for (j = 0; j<N;j++){
 			if (board->board[i][j].isError ==1){
-				return 0;
+				return 1;
 			}
 		}
 	}
-	return 1;
+	return 0;
+}
+void updateErrorsInBoard(SudokuBoard* board){
+	int n, m, N,i,j, error, curValue;
+	i=0;
+	j=0;
+	error=0;
+	curValue = 0;
+	n = board->n;
+	m = board->m;
+	N = n*m;
+	for (;i<N;i++){
+		j=0;
+		for (;j<N;j++){
+			curValue = board->board[i][j].content;
+			if (curValue!=0){
+				error = !isLegalValue(board, i, j, curValue );
+				board->board[i][j].isError = error;
+			}
+			else{
+				board->board[i][j].isError = 0;
+			}
+		}
+	}
+
 }
 int boardIsFull(SudokuBoard* board){
 	int n,m,N,i,j;
@@ -359,20 +394,131 @@ int boardIsEmpty(SudokuBoard* board){
 	}
 	return 1;
 }
-int generateXY(SudokuBoard* board,int x, int y){
-	int n,m,N,i,j;
+
+int generateXY(SudokuGame* game,int x, int y){
+	/*x,y<=N*N */
+	int n,m,N,i,ind,try,allSuccess,indX,indY;
+	int* xArray;
+	int* nums;
+	SudokuBoard* solvedBoard;
+
+	SudokuBoard* board=game->curBoard->board;
+	SudokuBoard* draftBoard=duplicateBoard(board);
 	n = board->n;
 	m = board->m;
 	N = n*m;
-	for (i = 0;i<N;i++){
-		for (j = 0; j<N;j++){
-			if (board->board[i][j].content>0){
-				return 0;
+
+
+	xArray=(int*)calloc((N*N)+1,sizeof(int));
+	nums=(int*)calloc(N+1,sizeof(int));
+
+	for (try = 0;try<1000;try++){
+		allSuccess=1;
+		xArray[0]=N*N;
+		for (i = 1; i<=N*N;i++){
+			xArray[i]=i;
+		}
+		nums[0]=N;
+		for (i = 1; i<=N;i++){
+			nums[i]=i;
+		}
+		for (i = 0; i<x;i++){
+			ind=getRandIndex(xArray);
+			indX=xArray[ind]/N;
+			indY=xArray[ind]%N;
+
+			if((manageArray(xArray,ind)==0)||(getPlausibleNums(draftBoard,indX,indY,nums)==0)){
+				allSuccess=0;  /* failed to find a legal value for one of the board[indX][indY] */
+			}
+			else{
+				ind=getRandIndex(nums); /* get index for a plausible number */
+				draftBoard->board[indX][indY].content=nums[ind]; /* set random legal value in random x,y */
 			}
 		}
+		solvedBoard=gurobi(draftBoard);
+		if ((allSuccess=0)||(solvedBoard==NULL)){
+			freeBoard(draftBoard);
+			draftBoard=duplicateBoard(board);
+		}
+		else{
+			clearYCells(solvedBoard,y,N);
+			InsertBoardNextNode(game,solvedBoard);
+
+			free(xArray);
+			free(nums);
+			freeBoard(draftBoard);
+			return 1;
+		}
 	}
-	return 1;
+	printf("Error: puzzle generator failed\n");
+	free(xArray);
+	free(nums);
+	freeBoard(draftBoard);
+	return 0;
 }
 
+void dealWithFullBoard(SudokuGame* game){
+	if (boardHasErrors(game->curBoard->board)==1){
+		printf("Puzzle solution erroneous\n");
+		game->onlyUndoAfterSolvedWithErrors=1;
+	}
+	else{
+		printf("Puzzle solved successfully\n");
 
+		/* TODO: free all memory of solved board */
+		game = initGameInInitMode();
+	}
+}
+int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){
+	int i=1;
+	while(i<=pNums[0]){  /* pNums[0]=N init */
+		if(isLegalValue(board,x,y,i)==0){
+			manageArray(pNums,i);
+		}
+		else{
+			i++;
+		}
+	}
+	return pNums[0];
+}
 
+int manageArray(int* arr, int ind){
+	/*given array and index, shifts left all values right to index.
+	 *  returns new array size defacto. */
+	int i=ind;
+	if(arr[0]==0){
+		return 0;
+	}
+	for (;i<=arr[0];i++){
+		arr[i]=arr[i+1];
+	}
+	arr[0]--;
+	return arr[0];
+}
+int getRandIndex(int* Arr){
+	/*returns a random index from the list (based on optional indexes) for the random board generator */
+	int size=Arr[0];
+	int ran=0;
+
+	if (size==0)
+		return 0;
+	ran=(rand()%size)+1;
+
+	return ran;
+}
+void clearYCells(SudokuBoard* board, int y, int N){
+	int i,ind;
+	int* xArray=(int*)calloc((N*N)+1,sizeof(int));
+	xArray[0]=N*N;
+	for (i = 1; i<=N*N;i++){
+		xArray[i]=i;
+	}
+	while(y>0){
+		ind=getRandIndex(xArray);
+		if(board->board[ind/N][ind%N].content>0){
+			board->board[ind/N][ind%N].content=0;
+			y--;
+		}
+	}
+	free(xArray);
+}

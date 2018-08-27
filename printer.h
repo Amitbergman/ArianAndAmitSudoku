@@ -19,9 +19,9 @@
 SudokuBoard* newEmptyBoard();
 void printSeperatorRow (int n, int N);
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne);
-void printRealRow (SudokuBoard * boardPointer, int rowToPrint);
+void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors);
 SudokuCell* createNewCell(int content, int isFixed, int isError);
-void sudokuBoardPrinter (SudokuBoard * boardPointer);
+void sudokuBoardPrinter (SudokuGame* game);
 SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m);
 char* rowToStr(SudokuBoard* sudoku, int rowToPrint );
 char* sudokuBoardToString(SudokuBoard* sudoku);
