@@ -83,10 +83,6 @@ void setBoard(SudokuGame* game, SudokuBoard* newBoard){
 
 }
 void setXYZ(SudokuGame* game, int* a){
-	int temp;
-	temp=a[0];
-	a[0]=a[1];
-	a[1]=temp;
 
 	SudokuBoard* newBoard;
 	Node* node;
@@ -135,21 +131,18 @@ void validate(SudokuBoard* board){
 		printf("Validation passed: board is solvable\n");
 	}
 }
-void hintXY(SudokuBoard* board, int x, int y){
+void hintXY(SudokuBoard* board, int col, int row){
 	SudokuBoard* solvedBoard=NULL;
-	int temp;
-	temp=x;
-	x=y;
-	y=temp;
+
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
-	if(board->board[x-1][y-1].isFixed==1){
+	if(board->board[col-1][row-1].isFixed==1){
 		printf("Error: cell is fixed\n");
 		return;
 	}
-	if(board->board[x-1][y-1].content>0){
+	if(board->board[col-1][row-1].content>0){
 		printf("Error: cell already contains a value\n");
 		return;
 	}
@@ -158,7 +151,7 @@ void hintXY(SudokuBoard* board, int x, int y){
 		printf("Error: board is unsolvable\n");
 	}
 	else{
-		printf("Hint: set cell to %d\n",solvedBoard->board[x-1][y-1].content);
+		printf("Hint: set cell to %d\n",solvedBoard->board[col-1][row-1].content);
 	}
 }
 
@@ -227,61 +220,61 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->curBoard=game->history->head;
 	sudokuBoardPrinter(game);
 }
-int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int row, int col){
+int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	int i=1;
 	int counter = 0;
 	int m = board->m;
 	int n = board->n;
 	int N = n*m;
 	for (;i<=N;i++){
-		counter += isLegalValue(board, row, col, i);
+		counter += isLegalValue(board, col, row, i);
 	}
 	return counter;
 }
 
-int getSingleValueToInsert(SudokuBoard* board, int row, int col){
+int getSingleValueToInsert(SudokuBoard* board, int col, int row){
 	int i=1;
 
 	int m = board->m;
 	int n = board->n;
 	int N = n*m;
 	for (;i<=N;i++){
-		if (isLegalValue(board, row, col, i)==1){
+		if (isLegalValue(board, col, row, i)==1){
 			return i;
 		}
 
 	}
 	return -1;
 }
-int isLegalValue(SudokuBoard * board, int row, int col, int valueToCheck){
+int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	int n,m,N,i,x;
 	n = board->n;
 	m = board->m;
 	N = n*m;
 	for (i=0;i<N;i++){
-		if ((board->board[row][i].content==valueToCheck)&&(!(i==col))){
+		if ((board->board[col][i].content==valueToCheck)&&(!(i==row))){
 			return 0;
 		}
 	}
 	for (i=0;i<N;i++){
-		if ((board->board[i][col].content==valueToCheck)&&(!(i==row))){
+		if ((board->board[i][row].content==valueToCheck)&&(!(i==col))){
 			return 0;
 		}
 	}
 
-	x= checkValidInBox(board, row, col, n, m, valueToCheck);
+	x= checkValidInBox(board, col, row, n, m, valueToCheck);
 	return x;
 
 }
-int checkValidInBox(SudokuBoard* board, int row, int col, int n, int m, int valueToCheck){
+int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
 	int startCol = (col/m)*m;
 	int startRow = (row/n)*n;
-	int i = startRow;
-	int j = startCol;
-	for (;i<startRow+n;i++){
-		j=startCol;
-		for (;j<startCol+m;j++){
-			if (board->board[i][j].content==valueToCheck&&((i!=row)||j!=col)){
+	int i = startCol;
+	int j = startRow;
+	for (;i<startCol+n;i++){
+		j=startRow;
+		for (;j<startRow+m;j++){
+			if (board->board[i][j].content==valueToCheck&&((i!=col)||j!=row)){
 				return 0;
 			}
 		}
@@ -290,7 +283,7 @@ int checkValidInBox(SudokuBoard* board, int row, int col, int n, int m, int valu
 
 }
 void autofill(SudokuGame* game){
-	int n,m,N, somethingChanged, row, col,x;
+	int n,m,N, somethingChanged, col, row,x;
 	SudokuBoard* newBoard;
 	Node* node;
 
@@ -306,15 +299,15 @@ void autofill(SudokuGame* game){
 	newBoard=duplicateBoard(game->curBoard->board);
 
 	somethingChanged=0;
-	for (row = 0;row<N;row++){
-		for (col = 0 ; col<N; col++){
-			if ((newBoard->board[row][col]).content==0)
+	for (col = 0;col<N;col++){
+		for (row = 0 ; row<N; row++){
+			if ((newBoard->board[col][row]).content==0)
 			{
-				x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, row,col);
+				x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, col,row);
 				/*not sure about that - if there is 0 things to put here, does that counts for an erroneous? */
 
 				if (x==1){
-					newBoard->board[row][col].content=getSingleValueToInsert(game->curBoard->board, row,col);
+					newBoard->board[col][row].content=getSingleValueToInsert(game->curBoard->board, col,row);
 					somethingChanged = 1;
 				}
 
@@ -417,6 +410,94 @@ void dealWithFullBoard(SudokuGame* game){
 		game = initGameInInitMode();
 	}
 }
+int num_solutions(SudokuBoard* board){
+	SudokuBoard* workBoard;
+	int i, j,n,m,N,result;
+	i=0;
+	j=0;
+	if (boardHasErrors(board)==1){
+		printf("Error: board contains erroneous values\n");
+		return -1;
+	}
+	workBoard =  duplicateBoard(board);
+	n=board->n;
+	m=board->m;
+	N = n*m;
+	for (;i<N;i++){
+		j=0;
+		for(;j<N;j++){
+			if (workBoard->board[i][j].content!=0){
+				workBoard->board[i][j].isFixed=1;
+			}
+		}
+	}
+	result= numSolutionsFromPlace(workBoard, 0, 0);
+	printf("Number of solutions: %d\n", result);
+	if (result==1){
+		printf("This is a good board!\n");
+	}
+	if (result > 1){
+		printf("The puzzle has more than 1 solution, try to edit it further\n");
+	}
+	return result;
+
+}
+int numSolutionsFromPlace(SudokuBoard* board, int col, int row){
+
+	int n,m,N,counter,valueToCheck;
+	n=board->n;
+	m = board->m;
+	N = n*m;
+	counter = 0;
+	valueToCheck=1;
+	if (board->board[col][row].isFixed==1){
+		if (isLegalValue(board, col, row, board->board[col][row].content)==0){
+			return 0;
+		}
+		else{
+			if (col==N-1){
+				if (row==N-1){
+					return 1;
+				}
+				else{
+					return numSolutionsFromPlace(board, 0,row+1);
+				}
+			}
+			else{
+					return numSolutionsFromPlace(board, col+1, row);
+			}
+		}
+	}
+
+	for(;valueToCheck<=N;valueToCheck++){
+		if (isLegalValue(board, col, row, valueToCheck)==1){
+			if (col==N-1){
+				if (row==N-1){
+					counter++;
+				}
+				else{
+					board->board[col][row].content=valueToCheck;
+					counter+=numSolutionsFromPlace(board, 0,row+1);
+
+				}
+			}
+			else{
+
+					board->board[col][row].content=valueToCheck;
+					counter+=numSolutionsFromPlace(board, col+1, row);
+
+
+			}
+
+	}
+
+	}
+	board->board[col][row].content=0;
+	return counter;
+
+}
+
+
 
 
 

@@ -236,7 +236,11 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if (strcmp(token,"num_solutions")==0){
-		printf("num_solutions");
+		if(game->gameMode==0){
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+		num_solutions(game->curBoard->board);
 		return 0;
 	}
 

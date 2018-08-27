@@ -70,7 +70,7 @@ void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors)
 			printf ("|");
 		}
 		else {
-			printCell (sudboard.board[rowToPrint][column], markErrors);
+			printCell (sudboard.board[column][rowToPrint], markErrors);
 			column ++;
 		}
 	}

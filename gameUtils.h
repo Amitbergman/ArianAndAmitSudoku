@@ -21,6 +21,8 @@ int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valu
 void autofill(SudokuGame* game);
 int boardHasErrors(SudokuBoard* board);
 void dealWithFullBoard(SudokuGame* game);
+int numSolutionsFromPlace(SudokuBoard* board, int col, int row);
+int num_solutions(SudokuBoard* board);
 
 void hintXY(SudokuBoard* board, int x, int y);
 void updateErrorsInBoard(SudokuBoard* board);
