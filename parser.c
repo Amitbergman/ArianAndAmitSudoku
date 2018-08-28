@@ -67,25 +67,16 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: file doesn't exist or cannot be opened\n");
 			return 0;
 		}
-		/* TODO - free memory of previous game
-		 *
-		 */
 		loadBoardFromFile(game, token, 1);
 		return 0;
 	}
 	if(strcmp(token,"edit")==0){
 		token = strtok(NULL, s);
 		if (token==NULL){/* edit with no file path */
-			/* TODO - free memory of previous game
-			 *
-			 */
-			changeToEmptyGameInEditMode(game);
 
+			changeToEmptyGameInEditMode(game);
 			return 0;
 		}
-		/* TODO - free memory of previous game !!!if the loading succeeded!!!
-		 *
-		 */
 		loadBoardFromFile(game, token, 2);
 
 		return 0;
@@ -175,7 +166,6 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
-
 		printf("Exiting...\n");
 		return 1;
 	}

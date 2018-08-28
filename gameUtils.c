@@ -62,13 +62,16 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	}
 	fclose(fp);
 
-	(*((*((*game).curBoard)).board))= *resBoard;
+	cleanNextNodes(game->history->head); /*free history */
+	game->curBoard=GetNewNode(resBoard);
+
+	/* (*((*((*game).curBoard)).board))= *resBoard;
 	game->curBoard->next=NULL;
-	game->curBoard->prev = NULL;
+	game->curBoard->prev = NULL; */
 	game->history->head = game->curBoard;
 	updateErrorsInBoard(game->curBoard->board);
 	sudokuBoardPrinter(game);
-
+	free(curChar);
 }
 
 void setXYZ(SudokuGame* game, int* a){
@@ -208,10 +211,17 @@ SudokuGame* initGameInInitMode(){
 
 	return game;
 }
+void freeGame(SudokuGame* game){
+	cleanNextNodes(game->history->head); /* clear and free history */
+	free(game->history);
+	free(game);
+}
 void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
-	InsertAtHead(game->history,newEmptyBoard());
+	cleanNextNodes(game->history->head);
+	/* InsertAtHead(game->history,newEmptyBoard()); */
+	game->history->head=GetNewNode(newEmptyBoard());
 	game->curBoard=game->history->head;
 	sudokuBoardPrinter(game);
 }
@@ -443,6 +453,8 @@ int generateXY(SudokuGame* game,int x, int y){
 		else{
 			clearYCells(solvedBoard,y,N);
 			InsertBoardNextNode(game,solvedBoard);
+			sudokuBoardPrinter(game); /*print */
+
 
 			free(xArray);
 			free(nums);
@@ -464,9 +476,8 @@ void dealWithFullBoard(SudokuGame* game){
 	}
 	else{
 		printf("Puzzle solved successfully\n");
-
-		/* TODO: free all memory of solved board */
-		game = initGameInInitMode();
+		freeGame(game);
+		initGameInInitMode(game);
 	}
 }
 int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){

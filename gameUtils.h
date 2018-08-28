@@ -14,6 +14,7 @@ void validate(SudokuBoard* board);
 void hintXY(SudokuBoard* board, int x, int y);
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 SudokuGame* initGameInInitMode();
+void freeGame(SudokuGame* game);
 void changeToEmptyGameInEditMode(SudokuGame*);
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);

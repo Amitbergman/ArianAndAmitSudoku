@@ -38,9 +38,8 @@ int startGame(){
 			exit=parseit(game,input);
 		}
 	}
-	/* TODO - free all the list of boards
-	 * TODO - free the game
-	 */
+	freeGame(game);
+	free(input);
 	return 0;
 }
 int main ()
