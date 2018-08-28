@@ -36,9 +36,13 @@ int parseit(SudokuGame* game, char* str){
 	N=(game->curBoard->board->m)*(game->curBoard->board->n);
 
 
-	//SudokuBoard* test;
-	//Amit: I am not sure about it, isnt it say  that the first word of the input is in size 256?
-	//I think they told us that if all the line is longer than 256 then we can ignore the input
+	/*SudokuBoard* test;
+	 * Amit: I am not sure about it, isnt it say  that the first
+	 *  word of the input is in size 256?
+	 *  I think they told us that if all the line is longer than 256
+	 *   then we can ignore the input
+	 */
+
 	if(strlen(token)>256){
 		printf("ERROR: invalid command\n");
 		return 0;
@@ -63,25 +67,16 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: file doesn't exist or cannot be opened\n");
 			return 0;
 		}
-		/* TODO - free memory of previous game
-		 *
-		 */
 		loadBoardFromFile(game, token, 1);
 		return 0;
 	}
 	if(strcmp(token,"edit")==0){
 		token = strtok(NULL, s);
 		if (token==NULL){/* edit with no file path */
-			/* TODO - free memory of previous game
-			 *
-			 */
-			changeToEmptyGameInEditMode(game);
 
+			changeToEmptyGameInEditMode(game);
 			return 0;
 		}
-		/* TODO - free memory of previous game !!!if the loading succeeded!!!
-		 *
-		 */
 		loadBoardFromFile(game, token, 2);
 
 		return 0;
@@ -171,7 +166,6 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
-
 		printf("Exiting...\n");
 		return 1;
 	}
@@ -183,13 +177,10 @@ int parseit(SudokuGame* game, char* str){
 			printf("test!=null");
 			setBoard(game,test);
 		}
-<<<<<<< HEAD
 
-=======
 		*/
 		/*game->curBoard->board=test;*/
 		/*
->>>>>>> c0a095d1d50518756d856133a009965d3aaf28e9
 		return 0;
 	}
 	*/
@@ -245,7 +236,7 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if (strcmp(token,"autofill")==0){
-		if (game->gameMode!=1)//game mode is not solve
+		if (game->gameMode!=1)	/*game mode is not solve */
 		{
 			printf("ERROR: invalid command\n");
 			return 0;
@@ -256,27 +247,31 @@ int parseit(SudokuGame* game, char* str){
 
 	if(strcmp(token,"generate")==0){
 		if(game->gameMode!=2){ /* only in edit mode */
-					printf("ERROR: invalid command\n");
-					return 0;
-				}
-				a=(int*)calloc(2,sizeof(int));
-				if (!a){
-					printf("Error: problem while allocating memory");
-					return 1;
-				}
+			printf("ERROR: invalid command\n");
+			return 0;
+		}
+		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
+			printf("ERROR: board is not empty\n");
+			return 0;
+		}
+		a=(int*)calloc(2,sizeof(int));
+		if (!a){
+			printf("Error: problem while allocating memory");
+			return 1;
+		}
 
-				for(i=0;i<2;i++){
-					token = strtok(NULL, s);
-					if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
-						printf("Error: value not in range 0-%d\n",N*N);
-						free(a);
-						return 0;
-					}
-					a[i]=atoi(token);
-				}
-				hintXY(game->curBoard->board,a[0],a[1]);
-
+		for(i=0;i<2;i++){
+			token = strtok(NULL, s);
+			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
+				printf("Error: value not in range 0-%d\n",N*N);
 				free(a);
+				return 0;
+			}
+			a[i]=atoi(token);
+		}
+		generateXY(game,a[0],a[1]);
+
+		free(a);
 		return 0;
 	}
 	printf("ERROR: invalid command\n");

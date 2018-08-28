@@ -90,7 +90,7 @@ SudokuCell* createNewCell(int content, int isFixed, int isError){
 	}
 }
 
-void sudokuBoardPrinter (SudokuGame * game)
+void sudokuBoardPrinter (SudokuGame* game)
 {
 
 	int i,n,m,N, row, markErrors;

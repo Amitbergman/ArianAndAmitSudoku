@@ -9,12 +9,12 @@
 #define GAMEUTILS_H_
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
-void setBoard(SudokuGame* game, SudokuBoard* newBoard);
 void setXYZ(SudokuGame* game, int* a);
 void validate(SudokuBoard* board);
 void hintXY(SudokuBoard* board, int x, int y);
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 SudokuGame* initGameInInitMode();
+void freeGame(SudokuGame* game);
 void changeToEmptyGameInEditMode(SudokuGame*);
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);
@@ -29,5 +29,10 @@ void updateErrorsInBoard(SudokuBoard* board);
 
 int boardIsFull(SudokuBoard* board);
 int boardIsEmpty(SudokuBoard* board);
+int generateXY(SudokuGame* game,int x, int y);
+int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums);
+int manageArray(int* arr, int ind);
+int getRandIndex(int* Arr);
+void clearYCells(SudokuBoard* board, int y, int N);
 
 #endif /* GAMEUTILS_H_ */

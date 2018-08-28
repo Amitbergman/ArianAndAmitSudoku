@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <time.h>
 #include "main.h"
 #include "structs.h"
 #include "printer.h"
@@ -37,13 +38,13 @@ int startGame(){
 			exit=parseit(game,input);
 		}
 	}
-	/* TODO - free all the list of boards
-	 * TODO - free the game
-	 */
+	freeGame(game);
+	free(input);
 	return 0;
 }
 int main ()
 {	SP_BUFF_SET();
+	srand(time(NULL));
 	printf("Sudoku\n------\n");
 	startGame();
 	return 0;
