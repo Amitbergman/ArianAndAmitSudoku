@@ -18,14 +18,11 @@
 
 
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
-	/* TODO - function to free all memory of previous game
-	 *
-	 */
+
 	FILE * fp;
 	int n,m,N,i,j, curCellContent;
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
-	(*game).gameMode = mode;
 
 
 	fp = fopen (fileToOpen, "r");
@@ -43,10 +40,8 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	curChar = (char *)calloc(1,sizeof(char));
 	curCellContent=0;
-	i=0;
-	for (;i<N;i++){
-		j=0;
-		for (;j<N;j++){
+	for (j=0;j<N;j++){
+		for (i=0;i<N;i++){
 			fscanf(fp, "%d", &curCellContent);
 			(*resBoard).board[i][j].content=curCellContent;
 			(*resBoard).board[i][j].isError=0;
@@ -62,6 +57,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	}
 	fclose(fp);
 
+	(*game).gameMode = mode;
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
 
@@ -70,7 +66,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard->prev = NULL; */
 	game->history->head = game->curBoard;
 	updateErrorsInBoard(game->curBoard->board);
-	sudokuBoardPrinter(game);
+	/*sudokuBoardPrinter(game);*/
 	free(curChar);
 }
 
@@ -157,14 +153,11 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		return;
 	}
 
-	/*
-	if (game->gameMode==2){
-		if (gurobi(game->curBoard->board)==NULL){
-			printf("Error: board validation failed\n");
-			return;
-		}
+	if ((game->gameMode==2)&&(gurobi(game->curBoard->board)==NULL)){
+		printf("Error: board validation failed\n");
+		return;
 	}
-	*/
+
 
 	fp = fopen(fileToOpen, "w");
 	if (!fp){
@@ -173,10 +166,8 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 
 	fprintf(fp, "%d %d\n",m,n );
-	i=0;
-	for (; i<N;i++){
-		j=0;
-		for (; j<N;j++){
+	for (i=0;i<N;i++){
+		for (j=0;j<N;j++){
 			fprintf(fp, "%d", (game->curBoard->board->board)[i][j].content);
 			if ((game->curBoard->board->board)[i][j].isFixed || (game->gameMode==2 && game->curBoard->board->board[i][j].content!=0)){
 				fprintf(fp, ".");
