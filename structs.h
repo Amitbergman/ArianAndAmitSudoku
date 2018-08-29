@@ -42,5 +42,18 @@ typedef struct SudokuGame
 	int onlyUndoAfterSolvedWithErrors;
 
 } SudokuGame;
+typedef struct stackNode{
+	int col;
+	int row;
+	int numToCheck;
+}stackNode;
+
+typedef struct stack{
+	int max_num;
+	stackNode* array;
+	int numOfElements;
+
+}stack;
+
 
 #endif /* STRUCTS_H_ */

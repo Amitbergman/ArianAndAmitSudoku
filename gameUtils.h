@@ -32,7 +32,13 @@ int boardIsEmpty(SudokuBoard* board);
 int generateXY(SudokuGame* game,int x, int y);
 int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums);
 int manageArray(int* arr, int ind);
+int isStackLegal(stackNode* stack, int curStackCount);
 int getRandIndex(int* Arr);
+stackNode* getNewStackNode(int col, int row, int numToCheck);
 void clearYCells(SudokuBoard* board, int y, int N);
+stackNode pop(stack* stack);
+void push(stack* stack, stackNode* nodeToPush);
+stackNode peek(stack* stack);
+stack* createNewEmptyStack();
 
 #endif /* GAMEUTILS_H_ */

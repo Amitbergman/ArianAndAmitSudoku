@@ -497,6 +497,9 @@ int num_solutions(SudokuBoard* board){
 		}
 	}
 	result= numSolutionsFromPlace(workBoard, 0, 0);
+	if (result == -1){
+		return -1;
+	}
 	printf("Number of solutions: %d\n", result);
 	if (result==1){
 		printf("This is a good board!\n");
@@ -509,56 +512,8 @@ int num_solutions(SudokuBoard* board){
 }
 int numSolutionsFromPlace(SudokuBoard* board, int col, int row){
 
-	int n,m,N,counter,valueToCheck;
-	n=board->n;
-	m = board->m;
-	N = n*m;
-	counter = 0;
-	valueToCheck=1;
-	if (board->board[col][row].isFixed==1){
-		if (isLegalValue(board, col, row, board->board[col][row].content)==0){
-			return 0;
-		}
-		else{
-			if (col==N-1){
-				if (row==N-1){
-					return 1;
-				}
-				else{
-					return numSolutionsFromPlace(board, 0,row+1);
-				}
-			}
-			else{
-					return numSolutionsFromPlace(board, col+1, row);
-			}
-		}
-	}
 
-	for(;valueToCheck<=N;valueToCheck++){
-		if (isLegalValue(board, col, row, valueToCheck)==1){
-			if (col==N-1){
-				if (row==N-1){
-					counter++;
-				}
-				else{
-					board->board[col][row].content=valueToCheck;
-					counter+=numSolutionsFromPlace(board, 0,row+1);
-
-				}
-			}
-			else{
-
-					board->board[col][row].content=valueToCheck;
-					counter+=numSolutionsFromPlace(board, col+1, row);
-
-
-			}
-
-	}
-
-	}
-	board->board[col][row].content=0;
-	return counter;
+	return 1;
 
 }
 
@@ -604,3 +559,59 @@ void clearYCells(SudokuBoard* board, int y, int N){
 	}
 	free(xArray);
 }
+stackNode* getNewStackNode(int col, int row, int numToCheck){
+	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
+	if (!result){
+		printf("error allocating memory");
+		return NULL;
+	}
+	result->col=col;
+	result->row=row;
+	result->numToCheck=numToCheck;
+	return result;
+}
+
+stack* createNewEmptyStack(int max_num){
+	stack* result = (stack*)calloc(1, sizeof(stack));
+	assert (result);
+	result->array = (stackNode*)calloc(max_num, sizeof(stackNode));
+	result->numOfElements=0;
+	result->max_num=max_num;
+	return result;
+}
+void push(stack* stack, stackNode* nodeToPush){
+	if(stack->numOfElements==stack->max_num){
+		realloc(stack->array, 2*stack->max_num);
+		stack->max_num*=2;
+	}
+	stack->array[stack->numOfElements]=*nodeToPush;
+	stack->numOfElements++;
+
+}
+stackNode pop(stack* stack){
+	assert (stack->numOfElements>0);
+	stackNode result = stack->array[stack->numOfElements-1];
+	stack->numOfElements--;
+	return result;
+
+}
+stackNode peek(stack* stack){
+	return stack->array[stack->numOfElements-1];
+}
+stackNode* copyNode(stackNode* nodeToCopy){
+	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
+	assert (result);
+	result->col = nodeToCopy->col;
+	result->numToCheck=nodeToCopy->numToCheck;
+	result->row=nodeToCopy->row;
+	return result;
+}
+int isEmpty(stack* stack){
+	return (stack->numOfElements==0);
+}
+void freeStack(stack* stack){
+	free(stack->array);
+	free(stack);
+}
+
+
