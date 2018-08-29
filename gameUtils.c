@@ -58,6 +58,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	fclose(fp);
 
 	(*game).gameMode = mode;
+	(*game).markErrors=1;
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
 
@@ -66,7 +67,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard->prev = NULL; */
 	game->history->head = game->curBoard;
 	updateErrorsInBoard(game->curBoard->board);
-	/*sudokuBoardPrinter(game);*/
+	/*sudokuBoardPrinter(game);   no need to print! */
 	free(curChar);
 }
 
@@ -181,7 +182,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 	fclose(fp);
 	printf("Saved to: %s\n",fileToOpen);
-	sudokuBoardPrinter(game);
+	/*sudokuBoardPrinter(game); no need to print!  */
 }
 
 SudokuGame* initGameInInitMode(){
@@ -206,7 +207,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	/* InsertAtHead(game->history,newEmptyBoard()); */
 	game->history->head=GetNewNode(newEmptyBoard());
 	game->curBoard=game->history->head;
-	sudokuBoardPrinter(game);
+	/*sudokuBoardPrinter(game);   no need to print!  */
 }
 int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	int i=1;
