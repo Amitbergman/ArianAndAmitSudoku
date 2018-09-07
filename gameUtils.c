@@ -611,59 +611,6 @@ int countNumberOfSolutions(SudokuBoard* board){
 
 
 }
-//void dealWithFixedCell(stack* stack, SudokuBoard* board){
-//	stackNode* curNode = getNewStackNode(0,0,1);
-//	*curNode = peek(stack);
-//
-//	if (curNode->numToCheck==0){
-//		pop(stack);
-//		increaseHeadOfStackByOne(stack);
-//	}
-//	else
-//		if (curNode->numToCheck!=board->board[col][row].content){//fixed and not the number
-//			increaseHeadOfStackByOne(stack);
-//		}
-//		else{
-//			int legal = isLegalValue(board, curNode->col, curNode->row, curNode->numToCheck);
-//			if (legal==0){//fixed and not legal
-//			pop(stack);
-//			increaseHeadOfStackByOne(stack);
-//
-//				}
-//				else{//fixed and legal
-//					if(curNode->col==N-1&&curNode->row==N-1){
-//						counter++;
-//						pop(stack);
-//						increaseHeadOfStackByOne(stack);
-//					}
-//					else{
-//					push(stack, getNewStackNode(curNode->col+1, curNode->row,1));
-//					}
-//
-//		}
-//	}
-//
-//
-//}
-//
-//void dealWithNotFixed(stack* stack, SudokuBoard* board){
-//	stackNode* curNode = getNewStackNode(0,0,1);
-//	*curNode = peek(stack);
-//	if (curNode->numToCheck==0){//done checking all nums
-//		pop(stack);
-//		increaseHeadOfStackByOne(stack);
-//	}
-//	else{
-//		int legality = isLegalValue(board, curNode->col, curNode->row, curNode->numToCheck);
-//		if (legality==0){ //not fixed and not legal
-//			increaseHeadOfStackByOne(stack);
-//
-//		}
-//	}
-//
-//
-//}
-
 
 int manageArray(int* arr, int ind){
 	/*given array and index, shifts left all values right to index.
