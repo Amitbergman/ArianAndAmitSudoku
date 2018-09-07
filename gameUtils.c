@@ -62,9 +62,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
 
-	/* (*((*((*game).curBoard)).board))= *resBoard;
-	game->curBoard->next=NULL;
-	game->curBoard->prev = NULL; */
 	game->history->head = game->curBoard;
 	updateErrorsInBoard(game->curBoard->board);
 	/*sudokuBoardPrinter(game);   no need to print! */
@@ -143,7 +140,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 
 
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
-	int m,n,N,i,j,a;
+	int m,n,N,row,col,a;
 	FILE * fp;
 	m = game->curBoard->board->m;
 	n = game->curBoard->board->n;
@@ -167,13 +164,13 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 
 	fprintf(fp, "%d %d\n",m,n );
-	for (i=0;i<N;i++){
-		for (j=0;j<N;j++){
-			fprintf(fp, "%d", (game->curBoard->board->board)[i][j].content);
-			if ((game->curBoard->board->board)[i][j].isFixed || (game->gameMode==2 && game->curBoard->board->board[i][j].content!=0)){
+	for (row=0;row<N;row++){
+		for (col=0;col<N;col++){
+			fprintf(fp, "%d", (game->curBoard->board->board)[col][row].content);
+			if ((game->curBoard->board->board)[col][row].isFixed || (game->gameMode==2 && game->curBoard->board->board[col][row].content!=0)){
 				fprintf(fp, ".");
 			}
-			if (j==N-1){
+			if (col==N-1){
 				fprintf(fp, "\n");
 			}else{
 				fprintf(fp, " ");
@@ -256,10 +253,11 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 
 }
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
-	int startCol = (col/m)*m;
-	int startRow = (row/n)*n;
-	int i = startCol;
-	int j = startRow;
+	int startCol,startRow, i,j;
+	startCol= (col/n)*n;
+	 startRow = (row/m)*m;
+	 i = startCol;
+	 j = startRow;
 	for (;i<startCol+n;i++){
 		j=startRow;
 		for (;j<startRow+m;j++){
@@ -337,24 +335,26 @@ int boardHasErrors(SudokuBoard* board){
 	return 0;
 }
 void updateErrorsInBoard(SudokuBoard* board){
-	int n, m, N,i,j, error, curValue;
-	i=0;
-	j=0;
+	int n, m, N,col,row, error, curValue;
+	col=0;
+	row=0;
 	error=0;
 	curValue = 0;
 	n = board->n;
 	m = board->m;
 	N = n*m;
-	for (;i<N;i++){
-		j=0;
-		for (;j<N;j++){
-			curValue = board->board[i][j].content;
+	for (;col<N;col++){
+		row=0;
+
+		for (;row<N;row++){
+			curValue = board->board[col][row].content;
 			if (curValue!=0){
-				error = !isLegalValue(board, i, j, curValue );
-				board->board[i][j].isError = error;
+
+				error = !isLegalValue(board, col, row, curValue );
+				board->board[col][row].isError = error;
 			}
 			else{
-				board->board[i][j].isError = 0;
+				board->board[col][row].isError = 0;
 			}
 		}
 	}
@@ -521,9 +521,10 @@ int countNumberOfSolutions(SudokuBoard* board){
 	n = board->n;
 	N = m*n;
 	currentNode = getNewStackNode(0,0,1);
-	workStack = createNewEmptyStack(2000);
+	workStack = createNewEmptyStack(N*N+1);
 	push(workStack, currentNode);
 	while(workStack->numOfElements > 0){
+
 		*currentNode = peek(workStack);
 		if (currentNode->numToCheck>N){//crossed all the numbers
 
