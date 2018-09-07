@@ -497,7 +497,7 @@ int num_solutions(SudokuBoard* board){
 			}
 		}
 	}
-	result= numSolutionsFromPlace(workBoard, 0, 0);
+	result= countNumberOfSolutions(workBoard);
 	if (result == -1){
 		return -1;
 	}
@@ -511,13 +511,158 @@ int num_solutions(SudokuBoard* board){
 	return result;
 
 }
-int numSolutionsFromPlace(SudokuBoard* board, int col, int row){
+int countNumberOfSolutions(SudokuBoard* board){
 
+	int counter,n,m,N;
+	stack* workStack;
+	stackNode* currentNode;
+	counter=0;
+	m = board->m;
+	n = board->n;
+	N = m*n;
+	currentNode = getNewStackNode(0,0,1);
+	workStack = createNewEmptyStack(2000);
+	push(workStack, currentNode);
+	while(workStack->numOfElements > 0){
+		*currentNode = peek(workStack);
+		if (currentNode->numToCheck>N){//crossed all the numbers
 
-	return 1;
+			if (currentNode->col==0&&currentNode->row==0){
+				return counter;
+			}
+			else{
+				if (board->board[currentNode->col][currentNode->row].isFixed!=1){
+					board->board[currentNode->col][currentNode->row].content=0;
+				}
+				pop(workStack);
+				increaseHeadOfStackByOne(workStack);
+			}
+
+		}
+		else{
+			if (board->board[currentNode->col][currentNode->row].isFixed==1){
+				//fixed
+				if (board->board[currentNode->col][currentNode->row].content==currentNode->numToCheck){
+					if (isLegalValue(board,currentNode->col,currentNode->row,currentNode->numToCheck)==1){
+							if (currentNode->col==N-1&&currentNode->row==N-1){
+								counter++;
+								pop(workStack);
+								increaseHeadOfStackByOne(workStack);
+							}
+							else{
+								if (currentNode->col!=N-1){
+									push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
+								}
+								else{
+									push(workStack, getNewStackNode(0, currentNode->row+1, 1));
+
+								}
+							}
+					}
+					else{
+						increaseHeadOfStackByOne(workStack);
+					}
+				}
+				else{
+					increaseHeadOfStackByOne(workStack);
+				}
+			}
+			else{//not fixed
+				if(isLegalValue(board, currentNode->col, currentNode->row, currentNode->numToCheck)==1){
+					if (currentNode->col==N-1&&currentNode->row==N-1){
+						counter++;
+						board->board[currentNode->col][currentNode->row].content=0;
+						pop(workStack);
+						increaseHeadOfStackByOne(workStack);
+					}
+					else{
+						board->board[currentNode->col][currentNode->row].content=currentNode->numToCheck;
+						if (currentNode->col!=N-1){
+							push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
+							}
+						else{
+							push(workStack, getNewStackNode(0, currentNode->row+1, 1));
+
+							}
+
+					}
+
+				}
+				else{//not fixed not legal
+					increaseHeadOfStackByOne(workStack);
+
+				}
+
+			}
+		}
 
 }
 
+	return counter;
+
+
+
+
+
+
+
+
+
+
+
+}
+//void dealWithFixedCell(stack* stack, SudokuBoard* board){
+//	stackNode* curNode = getNewStackNode(0,0,1);
+//	*curNode = peek(stack);
+//
+//	if (curNode->numToCheck==0){
+//		pop(stack);
+//		increaseHeadOfStackByOne(stack);
+//	}
+//	else
+//		if (curNode->numToCheck!=board->board[col][row].content){//fixed and not the number
+//			increaseHeadOfStackByOne(stack);
+//		}
+//		else{
+//			int legal = isLegalValue(board, curNode->col, curNode->row, curNode->numToCheck);
+//			if (legal==0){//fixed and not legal
+//			pop(stack);
+//			increaseHeadOfStackByOne(stack);
+//
+//				}
+//				else{//fixed and legal
+//					if(curNode->col==N-1&&curNode->row==N-1){
+//						counter++;
+//						pop(stack);
+//						increaseHeadOfStackByOne(stack);
+//					}
+//					else{
+//					push(stack, getNewStackNode(curNode->col+1, curNode->row,1));
+//					}
+//
+//		}
+//	}
+//
+//
+//}
+//
+//void dealWithNotFixed(stack* stack, SudokuBoard* board){
+//	stackNode* curNode = getNewStackNode(0,0,1);
+//	*curNode = peek(stack);
+//	if (curNode->numToCheck==0){//done checking all nums
+//		pop(stack);
+//		increaseHeadOfStackByOne(stack);
+//	}
+//	else{
+//		int legality = isLegalValue(board, curNode->col, curNode->row, curNode->numToCheck);
+//		if (legality==0){ //not fixed and not legal
+//			increaseHeadOfStackByOne(stack);
+//
+//		}
+//	}
+//
+//
+//}
 
 
 int manageArray(int* arr, int ind){
@@ -614,5 +759,13 @@ void freeStack(stack* stack){
 	free(stack->array);
 	free(stack);
 }
+void increaseHeadOfStackByOne(stack* stacker){
+
+	stackNode* res = (stackNode*)calloc (1, sizeof(stackNode));
+	*res = pop(stacker);
+	res->numToCheck+=1;
+	push(stacker, res);
 
 
+
+}

@@ -30,5 +30,6 @@ void redo (SudokuGame* game);
 void freeBoard(SudokuBoard* board);
 void cleanNextNodes (Node* node);
 void resetGame(SudokuGame* game);
+void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard);
 void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB);
 #endif /* ACTIONSHISTORY_H_ */
