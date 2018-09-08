@@ -7,6 +7,7 @@
 
 #ifndef GAMEUTILS_H_
 #define GAMEUTILS_H_
+void freeStack(stack* stack);
 void increaseHeadOfStackByOne(stack* stacker);
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode);
 void setXYZ(SudokuGame* game, int* a);

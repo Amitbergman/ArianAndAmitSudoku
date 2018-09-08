@@ -507,6 +507,8 @@ int num_solutions(SudokuBoard* board){
 	if (result > 1){
 		printf("The puzzle has more than 1 solution, try to edit it further\n");
 	}
+	free (workBoard->board);
+	free(workBoard);
 	return result;
 
 }
@@ -597,18 +599,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 		}
 
 }
-
+	free (currentNode);
+	freeStack(workStack);
 	return counter;
-
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -703,6 +696,7 @@ int isEmpty(stack* stack){
 	return (stack->numOfElements==0);
 }
 void freeStack(stack* stack){
+
 	free(stack->array);
 	free(stack);
 }
