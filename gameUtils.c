@@ -77,9 +77,10 @@ void setXYZ(SudokuGame* game, int* a){
 		return;
 	}
 
-	/* TODO validate(game);
-	 *
-	 */
+	if (game->curBoard->board->board[a[0]-1][a[1]-1].content==a[2]){
+		return; /* if no change is made, do nothing  */
+	}
+
 	newBoard=duplicateBoard(game->curBoard->board);
 	newBoard->board[a[0]-1][a[1]-1].content=a[2]; /* set board[x][y]=z */
 
@@ -94,11 +95,6 @@ void setXYZ(SudokuGame* game, int* a){
 			dealWithFullBoard(game);
 		}
 	}
-
-
-	/* TODO if ((game.mode==1)&&(validate(game)==0)||boardIsFull(game)){print puzzle solutions successfully/erroneous}
-	 * TODO checkIfSolved(game);
-	 */
 
 	return;
 }
@@ -526,7 +522,7 @@ int countNumberOfSolutions(SudokuBoard* board){
 	while(workStack->numOfElements > 0){
 
 		*currentNode = peek(workStack);
-		if (currentNode->numToCheck>N){//crossed all the numbers
+		if (currentNode->numToCheck>N){  /*crossed all the numbers */
 
 			if (currentNode->col==0&&currentNode->row==0){
 				return counter;
@@ -542,23 +538,23 @@ int countNumberOfSolutions(SudokuBoard* board){
 		}
 		else{
 			if (board->board[currentNode->col][currentNode->row].isFixed==1){
-				//fixed
+				/* fixed */
 				if (board->board[currentNode->col][currentNode->row].content==currentNode->numToCheck){
 					if (isLegalValue(board,currentNode->col,currentNode->row,currentNode->numToCheck)==1){
-							if (currentNode->col==N-1&&currentNode->row==N-1){
-								counter++;
-								pop(workStack);
-								increaseHeadOfStackByOne(workStack);
+						if (currentNode->col==N-1&&currentNode->row==N-1){
+							counter++;
+							pop(workStack);
+							increaseHeadOfStackByOne(workStack);
+						}
+						else{
+							if (currentNode->col!=N-1){
+								push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
 							}
 							else{
-								if (currentNode->col!=N-1){
-									push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
-								}
-								else{
-									push(workStack, getNewStackNode(0, currentNode->row+1, 1));
+								push(workStack, getNewStackNode(0, currentNode->row+1, 1));
 
-								}
 							}
+						}
 					}
 					else{
 						increaseHeadOfStackByOne(workStack);
@@ -568,7 +564,7 @@ int countNumberOfSolutions(SudokuBoard* board){
 					increaseHeadOfStackByOne(workStack);
 				}
 			}
-			else{//not fixed
+			else{	/* not fixed */
 				if(isLegalValue(board, currentNode->col, currentNode->row, currentNode->numToCheck)==1){
 					if (currentNode->col==N-1&&currentNode->row==N-1){
 						counter++;
@@ -580,16 +576,15 @@ int countNumberOfSolutions(SudokuBoard* board){
 						board->board[currentNode->col][currentNode->row].content=currentNode->numToCheck;
 						if (currentNode->col!=N-1){
 							push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
-							}
+						}
 						else{
 							push(workStack, getNewStackNode(0, currentNode->row+1, 1));
 
-							}
-
+						}
 					}
 
 				}
-				else{//not fixed not legal
+				else{	/*not fixed not legal */
 					increaseHeadOfStackByOne(workStack);
 
 				}
@@ -597,19 +592,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 			}
 		}
 
-}
+	}
 
 	return counter;
-
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -675,7 +660,7 @@ stack* createNewEmptyStack(int max_num){
 }
 void push(stack* stack, stackNode* nodeToPush){
 	if(stack->numOfElements==stack->max_num){
-		realloc(stack->array, 2*stack->max_num);
+		assert(realloc(stack->array, 2*stack->max_num)!=NULL);
 		stack->max_num*=2;
 	}
 	stack->array[stack->numOfElements]=*nodeToPush;
@@ -683,8 +668,9 @@ void push(stack* stack, stackNode* nodeToPush){
 
 }
 stackNode pop(stack* stack){
+	stackNode result;
 	assert (stack->numOfElements>0);
-	stackNode result = stack->array[stack->numOfElements-1];
+	result = stack->array[stack->numOfElements-1];
 	stack->numOfElements--;
 	return result;
 
