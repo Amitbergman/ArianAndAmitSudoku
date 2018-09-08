@@ -41,5 +41,8 @@ stackNode pop(stack* stack);
 void push(stack* stack, stackNode* nodeToPush);
 stackNode peek(stack* stack);
 stack* createNewEmptyStack();
+int isEmpty(stack* stack);
+void freeStack(stack* stack);
+void increaseHeadOfStackByOne(stack* stacker);
 
 #endif /* GAMEUTILS_H_ */
