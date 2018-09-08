@@ -30,16 +30,19 @@ int startGame(){
 	exit=0;
 	input=(char*)calloc(1024,sizeof(char));
 	game = initGameInInitMode();
-
 	while (exit==0){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
+		while(input[0]==' '){
+			input++;
+		}
 		if (strcmp(input, "\n")!=0){
 			exit=parseit(game,input);
 		}
 	}
 	freeGame(game);
 	free(input);
+
 	return 0;
 }
 int main ()

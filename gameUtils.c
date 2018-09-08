@@ -706,7 +706,4 @@ void increaseHeadOfStackByOne(stack* stacker){
 	*res = pop(stacker);
 	res->numToCheck+=1;
 	push(stacker, res);
-
-
-
 }
