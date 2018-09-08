@@ -20,10 +20,10 @@
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	FILE * fp;
-	int n,m,N,i,j, curCellContent;
+	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
-
+	(*game).gameMode = mode;
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
@@ -33,12 +33,26 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	n =0;
 	m =0 ;
-	fscanf(fp, "%d %d\n", &m,  &n);
+	check = fscanf(fp, "%d", &m);
+	if (check!=1){
+		printf("Problem with the format of the file being read");
+		exit(1);
+	}
+	fscanf(fp, "%d", &n);
+	if (check!=1){
+		printf("Problem with the format of the file being read");
+		exit(1);
+	}
 	N = n*m;
 	(*resBoard).m=m;
 	(*resBoard).n=n;
 
 	curChar = (char *)calloc(1,sizeof(char));
+	if (!curChar){
+		printf("Problem in memory allocating");
+		exit(1);
+
+	}
 	curCellContent=0;
 	for (j=0;j<N;j++){
 		for (i=0;i<N;i++){
@@ -57,8 +71,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	}
 	fclose(fp);
 
-	(*game).gameMode = mode;
-	(*game).markErrors=1;
+
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
 
@@ -180,9 +193,17 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 
 SudokuGame* initGameInInitMode(){
 	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
+	if (!game){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	game->gameMode=0; /* init */
-	game->markErrors=0;
+	game->markErrors=1;
 	game->history=(List*)calloc(1,sizeof(List));
+	if (!(game->history)){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	game->curBoard=GetNewNode(newEmptyBoard());
 	game->onlyUndoAfterSolvedWithErrors=0;
 
@@ -400,8 +421,15 @@ int generateXY(SudokuGame* game,int x, int y){
 
 
 	xArray=(int*)calloc((N*N)+1,sizeof(int));
+	if (!xArray){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	nums=(int*)calloc(N+1,sizeof(int));
-
+	if (!nums){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	for (try = 0;try<1000;try++){
 		allSuccess=1;
 		xArray[0]=N*N;
@@ -494,9 +522,6 @@ int num_solutions(SudokuBoard* board){
 		}
 	}
 	result= countNumberOfSolutions(workBoard);
-	if (result == -1){
-		return -1;
-	}
 	printf("Number of solutions: %d\n", result);
 	if (result==1){
 		printf("This is a good board!\n");
@@ -504,6 +529,8 @@ int num_solutions(SudokuBoard* board){
 	if (result > 1){
 		printf("The puzzle has more than 1 solution, try to edit it further\n");
 	}
+	free (workBoard->board);
+	free(workBoard);
 	return result;
 
 }
@@ -594,8 +621,12 @@ int countNumberOfSolutions(SudokuBoard* board){
 
 	}
 
-	return counter;
 
+
+	free(currentNode);
+	freeStack(workStack);
+
+	return counter;
 }
 
 int manageArray(int* arr, int ind){
@@ -625,6 +656,10 @@ int getRandIndex(int* Arr){
 void clearYCells(SudokuBoard* board, int y, int N){
 	int i,ind;
 	int* xArray=(int*)calloc((N*N)+1,sizeof(int));
+	if (!xArray){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	xArray[0]=N*N;
 	for (i = 1; i<=N*N;i++){
 		xArray[i]=i;
@@ -652,8 +687,15 @@ stackNode* getNewStackNode(int col, int row, int numToCheck){
 
 stack* createNewEmptyStack(int max_num){
 	stack* result = (stack*)calloc(1, sizeof(stack));
-	assert (result);
+	if (!result){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	result->array = (stackNode*)calloc(max_num, sizeof(stackNode));
+	if (!(result->array)){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	result->numOfElements=0;
 	result->max_num=max_num;
 	return result;
@@ -680,7 +722,10 @@ stackNode peek(stack* stack){
 }
 stackNode* copyNode(stackNode* nodeToCopy){
 	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
-	assert (result);
+	if (!result){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	result->col = nodeToCopy->col;
 	result->numToCheck=nodeToCopy->numToCheck;
 	result->row=nodeToCopy->row;
@@ -690,16 +735,19 @@ int isEmpty(stack* stack){
 	return (stack->numOfElements==0);
 }
 void freeStack(stack* stack){
+
 	free(stack->array);
 	free(stack);
 }
 void increaseHeadOfStackByOne(stack* stacker){
 
 	stackNode* res = (stackNode*)calloc (1, sizeof(stackNode));
+	if (!res){
+		printf("Problem in memory allocating");
+		exit(1);
+
+	}
 	*res = pop(stacker);
 	res->numToCheck+=1;
 	push(stacker, res);
-
-
-
 }

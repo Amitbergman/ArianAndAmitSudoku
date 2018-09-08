@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdio.h>
 #include "printer.h"
 #include "structs.h"
@@ -79,15 +78,14 @@ void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors)
 
 SudokuCell* createNewCell(int content, int isFixed, int isError){
 	SudokuCell * cellRef = (SudokuCell*)calloc(1, sizeof(SudokuCell));
-	if (cellRef){
+	if (!cellRef){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 		(*cellRef).content=content;
 		(*cellRef).isError=isError;
 		(*cellRef).isFixed=isFixed;
 		return cellRef;
-	}
-	else{
-		return NULL;
-	}
 }
 
 void sudokuBoardPrinter (SudokuGame* game)
@@ -126,20 +124,32 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 	int i,j,N;
 
 	SudokuBoard* result = (SudokuBoard*)calloc(1, sizeof(SudokuBoard));
-	assert(result!=NULL);
+	if(result==NULL){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	(*result).n=n;
 	(*result).m=m;
 	N = n*m;
 	(*result).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
-	assert ((*result).board!=NULL);
+	if ((*result).board==NULL){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	i = 0;
 	for (;i<N;i++){
 		j=0;
 		((*result).board)[i] = (SudokuCell *) calloc (N, sizeof (SudokuCell));
-		assert(((*result).board)[i]!=NULL);
+		if(((*result).board)[i]==NULL){
+			printf("Problem in memory allocating");
+			exit(1);
+		}
 		for (;j<N;j++){
 			SudokuCell* currentCell = createNewCell(array[i][j],0,0);
-			assert (currentCell!=NULL);
+			if (currentCell==NULL){
+				printf("Problem in memory allocating");
+				exit(1);
+			}
 			((((*result).board)[i])[j]) = *currentCell;
 		}
 	}
@@ -152,6 +162,10 @@ char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
 	char buffer[1024];
 	char* empty = "";
 	char *row = (char*)calloc(1024, sizeof(char));
+	if (!row){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	n = (*sudoku).n;
 	m = (*sudoku).m;
 	N = n*m;
@@ -180,10 +194,18 @@ SudokuBoard* newEmptyBoard(){
 	N=9;
 	i=0;
 	a = (int**)calloc(N, sizeof(int*));
+	if (!a){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 
 	for (; i<N;i++){
 		j=0;
 		a[i] = (int *)calloc(N, sizeof(int));
+		if (!(a[i])){
+			printf("Problem in memory allocating");
+			exit(1);
+		}
 		for (; j<N; j++){
 			a[i][j]= 0;
 		}
