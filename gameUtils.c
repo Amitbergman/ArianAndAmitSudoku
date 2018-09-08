@@ -58,7 +58,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	fclose(fp);
 
 	(*game).gameMode = mode;
-	(*game).markErrors=1;
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
 
@@ -185,7 +184,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 SudokuGame* initGameInInitMode(){
 	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
 	game->gameMode=0; /* init */
-	game->markErrors=0;
+	game->markErrors=1;
 	game->history=(List*)calloc(1,sizeof(List));
 	game->curBoard=GetNewNode(newEmptyBoard());
 	game->onlyUndoAfterSolvedWithErrors=0;
