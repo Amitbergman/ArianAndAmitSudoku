@@ -23,21 +23,25 @@
 /* Creates a new Node and returns pointer to it. */
 
 int startGame(){
-	int exit;
+	int exitTheGame;
 	char* input;
 	SudokuGame* game;
 
-	exit=0;
+	exitTheGame=0;
 	input=(char*)calloc(1024,sizeof(char));
+	if (!input){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	game = initGameInInitMode();
-	while (exit==0){
+	while (exitTheGame==0){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
 		while(input[0]==' '){
 			input++;
 		}
 		if (strcmp(input, "\n")!=0){
-			exit=parseit(game,input);
+			exitTheGame=parseit(game,input);
 		}
 	}
 	freeGame(game);

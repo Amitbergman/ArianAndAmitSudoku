@@ -7,13 +7,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "structs.h"
 
 Node* GetNewNode(SudokuBoard* x) {
 	Node* newNode = (Node*)calloc(1,sizeof(Node));
+	if (!newNode){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	newNode->board = x;
 	newNode->prev = NULL;
 	newNode->next = NULL;
@@ -23,20 +26,32 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	int i,j,N;
 
 	SudokuBoard* newBoard = (SudokuBoard*)calloc(1,sizeof(SudokuBoard));
-	assert(newBoard!=NULL);
+	if(newBoard ==NULL){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	newBoard->m=oldBoard->m;
 	newBoard->n=oldBoard->n;
 	N=(newBoard->m)*(newBoard->n);
 	i=0;
 	(*newBoard).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
-	assert ((*newBoard).board!=NULL);
+	if ((*newBoard).board==NULL){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	for (;i<N;i++){
 		j=0;
 		((*newBoard).board)[i] = (SudokuCell *) calloc (N, sizeof (SudokuCell));
-		assert(((*newBoard).board)[i]!=NULL);
+		if(((*newBoard).board)[i]==NULL){
+			printf("Problem in memory allocating");
+			exit(1);
+		}
 		for (;j<N;j++){
 			SudokuCell* currentCell = createNewCell((*oldBoard).board[i][j].content,(*oldBoard).board[i][j].isFixed,(*oldBoard).board[i][j].isError);
-			assert (currentCell!=NULL);
+			if (currentCell==NULL){
+				printf("Problem in memory allocating");
+				exit(1);
+			}
 			((((*newBoard).board)[i])[j]) = *currentCell;
 		}
 	}
@@ -82,7 +97,7 @@ void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
 			z1=boardA->board[col][row].content;
 			z2=boardB->board[col][row].content;
 			if (z1!=z2){
-				printf("cell %d,%d set to %d\n",col+1,row+1,z2);
+				printf("Cell <%d,%d> set to %d\n",col+1,row+1,z2);
 			}
 		}
 	}
@@ -92,12 +107,18 @@ void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
 SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
 	int i,j;
 	int **arr = (int**)calloc(N,sizeof(int*));
-	assert (arr!=NULL);
+	if (!arr){
+		printf("Problem in memory allocating");
+		exit(1);
+	}
 	i=0;
 	for (;i<N;i++){
 		j=0;
 		arr[i] = (int*)calloc(N,sizeof(int));
-		assert(arr[i]!=NULL);
+		if(!(arr[i])){
+			printf("Problem in memory allocating");
+			exit(1);
+		}
 		for(;j<N;j++)
 		{
 			arr[i][j]=0;
