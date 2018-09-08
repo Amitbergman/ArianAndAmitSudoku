@@ -64,22 +64,22 @@ void resetGame(SudokuGame* game){
 	printf("Board reset\n");
 }
 void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
-	int i,j,N,z1,z2;
+	int row,col,N,z1,z2;
 	N=(boardA->m)*(boardA->n);
 
-	for (i=0;i<N;i++){
-		for (j=0;j<N;j++){
-			z1=boardA->board[i][j].content;
-			z2=boardB->board[i][j].content;
+	for (row=0;row<N;row++){
+		for (col=0;col<N;col++){
+			z1=boardA->board[col][row].content;
+			z2=boardB->board[col][row].content;
 			if (z1!=z2){
 				if (z1==0){
-					printf("%s %d,%d: from %c to %d\n",undoRedo,i+1,j+1,'_',z2);
+					printf("%s %d,%d: from %c to %d\n",undoRedo,row+1,col+1,'_',z2);
 				}
 				else if (z2==0){
-					printf("%s %d,%d: from %d to %c\n",undoRedo,i+1,j+1,z1,'_');
+					printf("%s %d,%d: from %d to %c\n",undoRedo,row+1,col+1,z1,'_');
 				}
 				else{
-					printf("%s %d,%d: from %d to %d\n",undoRedo,i+1,j+1,z1,z2);
+					printf("%s %d,%d: from %d to %d\n",undoRedo,row+1,col+1,z1,z2);
 				}
 			}
 		}
