@@ -20,7 +20,7 @@
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	FILE * fp;
-	int n,m,N,i,j, curCellContent;
+	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
 	(*game).gameMode = mode;
@@ -33,7 +33,16 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	n =0;
 	m =0 ;
-	fscanf(fp, "%d %d\n", &m,  &n);
+	check = fscanf(fp, "%d", &m);
+	if (check!=1){
+		printf("Problem with the format of the file being read");
+		exit(1);
+	}
+	fscanf(fp, "%d", &n);
+	if (check!=1){
+		printf("Problem with the format of the file being read");
+		exit(1);
+	}
 	N = n*m;
 	(*resBoard).m=m;
 	(*resBoard).n=n;
