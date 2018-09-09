@@ -1,9 +1,4 @@
-/*
- * parser.c
- *
- *  Created on: 16 ×‘×�×•×’ 2018
- *      Author: arian
- */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -25,8 +20,7 @@ int parseit(SudokuGame* game, char* str){
 	4= printboard
 	 */
 
-	int N;
-	int i;
+	int N, i;
 	int* a;
 	char *token;
 	/*SudokuBoard* test;*/
@@ -53,7 +47,7 @@ int parseit(SudokuGame* game, char* str){
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
 		if (token==NULL){
-			printf("Error: file doesn't exist or cannot be opened\n");
+			printf("ERROR: invalid command\n");
 			return 0;
 		}
 		loadBoardFromFile(game, token, 1);
@@ -103,7 +97,7 @@ int parseit(SudokuGame* game, char* str){
 		a=(int*)calloc(3,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
-			return 1;
+			exit(1);
 		}
 		i=0;
 		for(;i<3;i++){
@@ -158,21 +152,6 @@ int parseit(SudokuGame* game, char* str){
 		printf("Exiting...\n");
 		return 1;
 	}
-	/*
-	if(strcmp(token,"testSolve")==0){
-
-		test= gurobi(game->curBoard->board);
-		if (test!=NULL){
-			printf("test!=null");
-			setBoard(game,test);
-		}
-
-		*/
-		/*game->curBoard->board=test;*/
-		/*
-		return 0;
-	}
-	*/
 
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){
@@ -196,7 +175,7 @@ int parseit(SudokuGame* game, char* str){
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
-			return 1;
+			exit(1);
 		}
 
 		for(i=0;i<2;i++){
@@ -246,7 +225,7 @@ int parseit(SudokuGame* game, char* str){
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
-			return 1;
+			exit( 1);
 		}
 
 		for(i=0;i<2;i++){

@@ -63,7 +63,11 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			}
 		}
 	}
-	fclose(fp);
+	check = fclose(fp);
+	if (check!=0){
+		printf("Problem while closing the file");
+		exit(1);
+	}
 
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
@@ -144,7 +148,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 
 
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
-	int m,n,N,row,col,a;
+	int m,n,N,row,col,a,check;
 	FILE * fp;
 	m = game->curBoard->board->m;
 	n = game->curBoard->board->n;
@@ -181,7 +185,11 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 			}
 		}
 	}
-	fclose(fp);
+	check = fclose(fp);
+	if (check!=0){
+		printf("Problem while closing the file");
+		exit(1);
+	}
 	printf("Saved to: %s\n",fileToOpen);
 	/*sudokuBoardPrinter(game); no need to print!  */
 }
