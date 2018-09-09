@@ -1,9 +1,3 @@
-/*
- * gameUtils.c
- *
- *  Created on: Aug 17, 2018
- *      Author: User
- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,7 +7,6 @@
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "gurobi.h"
-
 #include "gameUtils.h"
 
 
@@ -23,7 +16,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
-	(*game).gameMode = mode;
+
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
@@ -53,6 +46,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		exit(1);
 
 	}
+	(*game).gameMode = mode;
 	curCellContent=0;
 	for (j=0;j<N;j++){
 		for (i=0;i<N;i++){
@@ -70,7 +64,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		}
 	}
 	fclose(fp);
-
 
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
@@ -111,6 +104,7 @@ void setXYZ(SudokuGame* game, int* a){
 
 	return;
 }
+
 void validate(SudokuBoard* board){
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
@@ -123,6 +117,7 @@ void validate(SudokuBoard* board){
 		printf("Validation passed: board is solvable\n");
 	}
 }
+
 void hintXY(SudokuBoard* board, int col, int row){
 	SudokuBoard* solvedBoard=NULL;
 
@@ -205,15 +200,15 @@ SudokuGame* initGameInInitMode(){
 		exit(1);
 	}
 	game->curBoard=GetNewNode(newEmptyBoard());
-	game->onlyUndoAfterSolvedWithErrors=0;
-
 	return game;
 }
+
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
 	free(game);
 }
+
 void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
@@ -223,6 +218,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->curBoard=game->history->head;
 	/*sudokuBoardPrinter(game);   no need to print!  */
 }
+
 int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	int i=1;
 	int counter = 0;
@@ -351,6 +347,7 @@ int boardHasErrors(SudokuBoard* board){
 	}
 	return 0;
 }
+
 void updateErrorsInBoard(SudokuBoard* board){
 	int n, m, N,col,row, error, curValue;
 	col=0;
@@ -480,12 +477,10 @@ int generateXY(SudokuGame* game,int x, int y){
 void dealWithFullBoard(SudokuGame* game){
 	if (boardHasErrors(game->curBoard->board)==1){
 		printf("Puzzle solution erroneous\n");
-		game->onlyUndoAfterSolvedWithErrors=1;
 	}
 	else{
 		printf("Puzzle solved successfully\n");
-		freeGame(game);
-		initGameInInitMode(game);
+		game->gameMode=0;
 	}
 }
 int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){
