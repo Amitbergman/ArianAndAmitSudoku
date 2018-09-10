@@ -533,8 +533,8 @@ int num_solutions(SudokuBoard* board){
 	if (result > 1){
 		printf("The puzzle has more than 1 solution, try to edit it further\n");
 	}
-	free (workBoard->board);
-	free(workBoard);
+	freeBoard(workBoard);
+
 	return result;
 
 }
@@ -700,11 +700,16 @@ stack* createNewEmptyStack(int max_num){
 }
 void push(stack* stack, stackNode* nodeToPush){
 	if(stack->numOfElements==stack->max_num){
-		assert(realloc(stack->array, 2*stack->max_num)!=NULL);
+		if ((realloc(stack->array, 2*stack->max_num)==NULL)){
+			printf("problem allocating while pushing");
+			exit(1);
+		}
 		stack->max_num*=2;
 	}
 	stack->array[stack->numOfElements]=*nodeToPush;
 	stack->numOfElements++;
+
+
 }
 stackNode pop(stack* stack){
 	stackNode result;
@@ -732,6 +737,7 @@ int isEmpty(stack* stack){
 	return (stack->numOfElements==0);
 }
 void freeStack(stack* stack){
+
 	free(stack->array);
 	free(stack);
 }
@@ -745,4 +751,5 @@ void increaseHeadOfStackByOne(stack* stacker){
 	*res = pop(stacker);
 	res->numToCheck+=1;
 	push(stacker, res);
+	free(res);
 }

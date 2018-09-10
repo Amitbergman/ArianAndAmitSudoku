@@ -53,7 +53,7 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 				printf("Problem in memory allocating");
 				exit(1);
 			}
-			((((*newBoard).board)[i])[j]) = *currentCell;
+			newBoard->board[i][j] = *currentCell;
 
 		}
 	}
