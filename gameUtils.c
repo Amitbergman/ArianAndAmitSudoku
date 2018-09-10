@@ -15,8 +15,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	FILE * fp;
 	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
-
-
+	SudokuBoard* resBoard;
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
@@ -36,7 +35,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		printf("Problem with the format of the file being read");
 		exit(1);
 	}
-	SudokuBoard* resBoard = newEmptyBoard(n,m);
+	resBoard = newEmptyBoard(n,m);
 	N = n*m;
 	(*resBoard).m=m;
 	(*resBoard).n=n;
