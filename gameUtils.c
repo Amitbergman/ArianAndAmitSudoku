@@ -214,6 +214,9 @@ SudokuGame* initGameInInitMode(){
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
+	free(game->curBoard->board);
+	free(game->curBoard);
+
 	free(game);
 }
 
