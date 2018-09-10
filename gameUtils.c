@@ -15,7 +15,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	FILE * fp;
 	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
-	SudokuBoard* resBoard = newEmptyBoard();
+
 
 
 	fp = fopen (fileToOpen, "r");
@@ -36,6 +36,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		printf("Problem with the format of the file being read");
 		exit(1);
 	}
+	SudokuBoard* resBoard = newEmptyBoard(n,m);
 	N = n*m;
 	(*resBoard).m=m;
 	(*resBoard).n=n;
@@ -207,13 +208,14 @@ SudokuGame* initGameInInitMode(){
 		printf("Problem in memory allocating");
 		exit(1);
 	}
-	game->curBoard=GetNewNode(newEmptyBoard());
+
 	return game;
 }
 
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
+
 	free(game);
 }
 
@@ -221,8 +223,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
 	cleanNextNodes(game->history->head);
-	/* InsertAtHead(game->history,newEmptyBoard()); */
-	game->history->head=GetNewNode(newEmptyBoard());
+	game->history->head=GetNewNode(newEmptyBoard(3,3));
 	game->curBoard=game->history->head;
 	/*sudokuBoardPrinter(game);   no need to print!  */
 }

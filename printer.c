@@ -153,6 +153,7 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 			((((*result).board)[i])[j]) = *currentCell;
 		}
 	}
+
 	return result;
 
 }
@@ -187,11 +188,12 @@ char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
 	return row;
 
 }
-SudokuBoard* newEmptyBoard(){
+SudokuBoard* newEmptyBoard(int n, int m){
 	int i,j,N;
 	int** a;
+	SudokuBoard* res;
 
-	N=9;
+	N=n*m;
 	i=0;
 	a = (int**)calloc(N, sizeof(int*));
 	if (!a){
@@ -210,7 +212,13 @@ SudokuBoard* newEmptyBoard(){
 			a[i][j]= 0;
 		}
 	}
-	return createSudokuBoardFromArray(a,3,3);
+	res= createSudokuBoardFromArray(a,n,m);
+	i=0;
+	for (;i<N;i++){
+		free(a[i]);
+	}
+	free(a);
+	return res;
 }
 SudokuBoard* stringToSudokuBoard(char * str){
 	char x;

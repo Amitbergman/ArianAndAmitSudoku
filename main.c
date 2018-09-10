@@ -34,7 +34,7 @@ int startGame(){
 	exitTheGame=0;
 	input=(char*)calloc(1024,sizeof(char));
 	if (!input){
-		printf("Problem in memory allocating");
+		printf(" Problem in memory allocating");
 		exit(1);
 	}
 	game = initGameInInitMode();
@@ -56,6 +56,7 @@ int startGame(){
 }
 int main ()
 {	SP_BUFF_SET();
+
 	srand(time(NULL));
 	printf("Sudoku\n------\n");
 	startGame();
