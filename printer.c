@@ -122,6 +122,7 @@ void sudokuBoardPrinter (SudokuGame* game)
 
 SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 	int i,j,N;
+	SudokuCell* currentCell;
 
 	SudokuBoard* result = (SudokuBoard*)calloc(1, sizeof(SudokuBoard));
 	if(result==NULL){
@@ -145,12 +146,13 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 			exit(1);
 		}
 		for (;j<N;j++){
-			SudokuCell* currentCell = createNewCell(array[i][j],0,0);
+			currentCell = createNewCell(array[i][j],0,0);
 			if (currentCell==NULL){
 				printf("Problem in memory allocating");
 				exit(1);
 			}
-			((((*result).board)[i])[j]) = *currentCell;
+			result->board[i][j]=*currentCell;
+			free(currentCell);
 		}
 	}
 

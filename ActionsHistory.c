@@ -53,11 +53,12 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 				printf("Problem in memory allocating");
 				exit(1);
 			}
-			newBoard->board[i][j] = *currentCell;
+
+			((((*newBoard).board)[i])[j]) = *currentCell;
+			free(currentCell);
 
 		}
 	}
-	free(currentCell);
 	return newBoard;
 }
 void resetGame(SudokuGame* game){
@@ -183,13 +184,11 @@ void cleanNextNodes (Node* node){
 	return;
 }
 void freeBoard(SudokuBoard* board){
-	int i,j;
+	int i;
 	int N=(board->m)*(board->n);
 	for (i=0;i<N;i++)
 	{
-		for(j=0;j<N;j++){
-			free(&((((*board).board)[i])[j]));
-		}
+
 		free (board->board[i]);
 	}
 	free(board->board);
