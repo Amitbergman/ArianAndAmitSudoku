@@ -165,24 +165,8 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
-		printf("Exiting...\n");
 		return 1;
 	}
-	/*
-	if(strcmp(token,"testSolve")==0){
-
-		test= gurobi(game->curBoard->board);
-		if (test!=NULL){
-			printf("test!=null");
-			setBoard(game,test);
-		}
-
-		*/
-		/*game->curBoard->board=test;*/
-		/*
-		return 0;
-	}
-	*/
 
 	if(strcmp(token,"save")==0){
 		if(game->gameMode==0){

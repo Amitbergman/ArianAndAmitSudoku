@@ -34,7 +34,7 @@ int startGame(){
 		exit(1);
 	}
 	game = initGameInInitMode();
-	while (exitTheGame==0){
+	while ((exitTheGame==0)&&(!feof(stdin))){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
 		while(input[0]==' '){
@@ -44,9 +44,9 @@ int startGame(){
 			exitTheGame=parseit(game,input);
 		}
 	}
+	printf("Exiting...\n");
 	freeGame(game);
 	free(input);
-
 	return 0;
 }
 int main ()
