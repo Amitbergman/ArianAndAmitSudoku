@@ -20,7 +20,11 @@
 #include "gameUtils.h"
 
 
-/* Creates a new Node and returns pointer to it. */
+/*
+
+*starts the game
+
+ */
 
 int startGame(){
 	int exitTheGame;
@@ -37,6 +41,7 @@ int startGame(){
 	while (exitTheGame==0){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
+
 		while(input[0]==' '){
 			input++;
 		}
@@ -44,9 +49,9 @@ int startGame(){
 			exitTheGame=parseit(game,input);
 		}
 	}
+
 	freeGame(game);
 	free(input);
-
 	return 0;
 }
 int main ()

@@ -73,13 +73,13 @@ void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 			z2=boardB->board[col][row].content;
 			if (z1!=z2){
 				if (z1==0){
-					printf("%s %d,%d: from %c to %d\n",undoRedo,row+1,col+1,'_',z2);
+					printf("%s %d,%d: from %c to %d\n",undoRedo,col+1,row+1,'_',z2);
 				}
 				else if (z2==0){
-					printf("%s %d,%d: from %d to %c\n",undoRedo,row+1,col+1,z1,'_');
+					printf("%s %d,%d: from %d to %c\n",undoRedo,col+1,row+1,z1,'_');
 				}
 				else{
-					printf("%s %d,%d: from %d to %d\n",undoRedo,row+1,col+1,z1,z2);
+					printf("%s %d,%d: from %d to %d\n",undoRedo,col+1,row+1,z1,z2);
 				}
 			}
 		}
