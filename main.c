@@ -38,7 +38,7 @@ int startGame(){
 		exit(1);
 	}
 	game = initGameInInitMode();
-	while (exitTheGame==0){
+	while ((exitTheGame==0)&&(!feof(stdin))){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
 
@@ -59,6 +59,7 @@ int main ()
 	srand(time(NULL));
 	printf("Sudoku\n------\n");
 	startGame();
+	printf("Exiting...\n");
 	return 0;
 }
 

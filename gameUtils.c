@@ -416,7 +416,7 @@ int boardIsEmpty(SudokuBoard* board){
 
 int generateXY(SudokuGame* game,int x, int y){
 	/*x,y<=N*N */
-	int n,m,N,i,ind,try,allSuccess,indX,indY;
+	int n,m,N,i,ind,trial,allSuccess,indX,indY;
 	int* xArray;
 	int* nums;
 	SudokuBoard* solvedBoard;
@@ -428,7 +428,7 @@ int generateXY(SudokuGame* game,int x, int y){
 	N = n*m;
 
 
-	xArray=(int*)calloc((N*N)+1,sizeof(int));
+	xArray=(int*)calloc((N*N)+1,sizeof(int)); /* xArray is array of indexes */
 	if (!xArray){
 		printf("Problem in memory allocating");
 		exit(1);
@@ -438,7 +438,7 @@ int generateXY(SudokuGame* game,int x, int y){
 		printf("Problem in memory allocating");
 		exit(1);
 	}
-	for (try = 0;try<1000;try++){
+	for (trial = 0;trial<1000;trial++){ /* 1000 trials */
 		allSuccess=1;
 		xArray[0]=N*N;
 		for (i = 1; i<=N*N;i++){
@@ -553,7 +553,6 @@ int countNumberOfSolutions(SudokuBoard* board){
 	workStack = createNewEmptyStack(N*N+1);
 	push(workStack, currentNode);
 	while(workStack->numOfElements > 0){
-
 		*currentNode = peek(workStack);
 		if (currentNode->numToCheck>N){  /*crossed all the numbers */
 
@@ -567,7 +566,6 @@ int countNumberOfSolutions(SudokuBoard* board){
 				pop(workStack);
 				increaseHeadOfStackByOne(workStack);
 			}
-
 		}
 		else{
 			if (board->board[currentNode->col][currentNode->row].isFixed==1){
@@ -621,13 +619,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 					increaseHeadOfStackByOne(workStack);
 
 				}
-
 			}
 		}
-
 	}
-
-
 
 	free(currentNode);
 	freeStack(workStack);
@@ -713,7 +707,6 @@ void push(stack* stack, stackNode* nodeToPush){
 	}
 	stack->array[stack->numOfElements]=*nodeToPush;
 	stack->numOfElements++;
-
 }
 stackNode pop(stack* stack){
 	stackNode result;
@@ -741,12 +734,10 @@ int isEmpty(stack* stack){
 	return (stack->numOfElements==0);
 }
 void freeStack(stack* stack){
-
 	free(stack->array);
 	free(stack);
 }
 void increaseHeadOfStackByOne(stack* stacker){
-
 	stackNode* res = (stackNode*)calloc (1, sizeof(stackNode));
 	if (!res){
 		printf("Problem in memory allocating");

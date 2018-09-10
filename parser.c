@@ -116,9 +116,11 @@ int parseit(SudokuGame* game, char* str){
 	}
 	if(strcmp(token,"validate")==0){
 		if(game->gameMode==0){
-					printf("ERROR: invalid command\n");
-				}
-		validate(game->curBoard->board);
+			printf("ERROR: invalid command\n");
+		}
+		else{
+			validate(game->curBoard->board);
+		}
 		return 0;
 	}
 	if(strcmp(token,"undo")==0){
@@ -149,7 +151,6 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
-		printf("Exiting...\n");
 		return 1;
 	}
 
