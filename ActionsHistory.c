@@ -183,10 +183,13 @@ void cleanNextNodes (Node* node){
 	return;
 }
 void freeBoard(SudokuBoard* board){
-	int i=0;
+	int i,j;
 	int N=(board->m)*(board->n);
-	for (;i<N;i++)
+	for (i=0;i<N;i++)
 	{
+		for(j=0;j<N;j++){
+			free(&((((*board).board)[i])[j]));
+		}
 		free (board->board[i]);
 	}
 	free(board->board);
