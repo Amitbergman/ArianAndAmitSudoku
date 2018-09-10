@@ -218,16 +218,11 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
-		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
-			printf("ERROR: board is not empty\n");
-			return 0;
-		}
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
 			exit( 1);
 		}
-
 		for(i=0;i<2;i++){
 			token = strtok(NULL, s);
 			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
@@ -237,6 +232,11 @@ int parseit(SudokuGame* game, char* str){
 			}
 			a[i]=atoi(token);
 		}
+		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
+			printf("Error: board is not empty\n");
+			return 0;
+		}
+
 		generateXY(game,a[0],a[1]);
 
 		free(a);
