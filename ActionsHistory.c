@@ -24,6 +24,7 @@ Node* GetNewNode(SudokuBoard* x) {
 }
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	int i,j,N;
+	SudokuCell* currentCell;
 
 	SudokuBoard* newBoard = (SudokuBoard*)calloc(1,sizeof(SudokuBoard));
 	if(newBoard ==NULL){
@@ -47,14 +48,16 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 			exit(1);
 		}
 		for (;j<N;j++){
-			SudokuCell* currentCell = createNewCell((*oldBoard).board[i][j].content,(*oldBoard).board[i][j].isFixed,(*oldBoard).board[i][j].isError);
+			currentCell = createNewCell((*oldBoard).board[i][j].content,(*oldBoard).board[i][j].isFixed,(*oldBoard).board[i][j].isError);
 			if (currentCell==NULL){
 				printf("Problem in memory allocating");
 				exit(1);
 			}
 			((((*newBoard).board)[i])[j]) = *currentCell;
+
 		}
 	}
+	free(currentCell);
 	return newBoard;
 }
 void resetGame(SudokuGame* game){
@@ -182,9 +185,11 @@ void cleanNextNodes (Node* node){
 void freeBoard(SudokuBoard* board){
 	int i=0;
 	int N=(board->m)*(board->n);
-	for (;i<N;i++){
-		free(board->board[i]);
+	for (;i<N;i++)
+	{
+		free (board->board[i]);
 	}
+	free(board->board);
 	free(board);
 	return;
 }

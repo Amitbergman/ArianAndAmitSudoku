@@ -23,11 +23,8 @@ int parseit(SudokuGame* game, char* str){
 	int N, i;
 	int* a;
 	char *token;
-	/*SudokuBoard* test;*/
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
-	N=(game->curBoard->board->m)*(game->curBoard->board->n);
-
 
 	/*SudokuBoard* test;
 	 * Amit: I am not sure about it, isnt it say  that the first
@@ -94,6 +91,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
+		N = game->curBoard->board->m*game->curBoard->board->n;
 		a=(int*)calloc(3,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
@@ -173,6 +171,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
+		N = game->curBoard->board->m*game->curBoard->board->n;
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
@@ -219,6 +218,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
+		N = game->curBoard->board->m*game->curBoard->board->n;
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");

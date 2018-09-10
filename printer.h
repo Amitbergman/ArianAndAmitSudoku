@@ -16,7 +16,7 @@
 #include "main.h"
 #include "structs.h"
 
-SudokuBoard* newEmptyBoard();
+SudokuBoard* newEmptyBoard(int n, int m);
 void printSeperatorRow (int n, int N);
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkSetToOne);
 void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors);
