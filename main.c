@@ -20,7 +20,11 @@
 #include "gameUtils.h"
 
 
-/* Creates a new Node and returns pointer to it. */
+/*
+
+*starts the game
+
+ */
 
 int startGame(){
 	int exitTheGame;
@@ -37,6 +41,7 @@ int startGame(){
 	while ((exitTheGame==0)&&(!feof(stdin))){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
+
 		while(input[0]==' '){
 			input++;
 		}
@@ -44,7 +49,7 @@ int startGame(){
 			exitTheGame=parseit(game,input);
 		}
 	}
-	printf("Exiting...\n");
+
 	freeGame(game);
 	free(input);
 	return 0;
@@ -54,6 +59,7 @@ int main ()
 	srand(time(NULL));
 	printf("Sudoku\n------\n");
 	startGame();
+	printf("Exiting...\n");
 	return 0;
 }
 

@@ -39,9 +39,9 @@ typedef struct SudokuGame
 	int markErrors;
 	List *history;
 	Node *curBoard;
-	int onlyUndoAfterSolvedWithErrors;
 
 } SudokuGame;
+
 typedef struct stackNode{
 	int col;
 	int row;

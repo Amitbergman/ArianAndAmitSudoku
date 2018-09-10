@@ -1,9 +1,3 @@
-/*
- * gameUtils.c
- *
- *  Created on: Aug 17, 2018
- *      Author: User
- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,7 +7,6 @@
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "gurobi.h"
-
 #include "gameUtils.h"
 
 
@@ -23,7 +16,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	int n,m,N,i,j, check,curCellContent;
 	char* curChar;
 	SudokuBoard* resBoard = newEmptyBoard();
-	(*game).gameMode = mode;
+
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
@@ -53,6 +46,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 		exit(1);
 
 	}
+	(*game).gameMode = mode;
 	curCellContent=0;
 	for (j=0;j<N;j++){
 		for (i=0;i<N;i++){
@@ -69,8 +63,11 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			}
 		}
 	}
-	fclose(fp);
-
+	check = fclose(fp);
+	if (check!=0){
+		printf("Problem while closing the file");
+		exit(1);
+	}
 
 	cleanNextNodes(game->history->head); /*free history */
 	game->curBoard=GetNewNode(resBoard);
@@ -111,6 +108,7 @@ void setXYZ(SudokuGame* game, int* a){
 
 	return;
 }
+
 void validate(SudokuBoard* board){
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
@@ -123,6 +121,7 @@ void validate(SudokuBoard* board){
 		printf("Validation passed: board is solvable\n");
 	}
 }
+
 void hintXY(SudokuBoard* board, int col, int row){
 	SudokuBoard* solvedBoard=NULL;
 
@@ -149,7 +148,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 
 
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
-	int m,n,N,row,col,a;
+	int m,n,N,row,col,a,check;
 	FILE * fp;
 	m = game->curBoard->board->m;
 	n = game->curBoard->board->n;
@@ -186,7 +185,11 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 			}
 		}
 	}
-	fclose(fp);
+	check = fclose(fp);
+	if (check!=0){
+		printf("Problem while closing the file");
+		exit(1);
+	}
 	printf("Saved to: %s\n",fileToOpen);
 	/*sudokuBoardPrinter(game); no need to print!  */
 }
@@ -205,15 +208,15 @@ SudokuGame* initGameInInitMode(){
 		exit(1);
 	}
 	game->curBoard=GetNewNode(newEmptyBoard());
-	game->onlyUndoAfterSolvedWithErrors=0;
-
 	return game;
 }
+
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
 	free(game);
 }
+
 void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
@@ -223,6 +226,7 @@ void changeToEmptyGameInEditMode(SudokuGame* game){
 	game->curBoard=game->history->head;
 	/*sudokuBoardPrinter(game);   no need to print!  */
 }
+
 int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	int i=1;
 	int counter = 0;
@@ -351,6 +355,7 @@ int boardHasErrors(SudokuBoard* board){
 	}
 	return 0;
 }
+
 void updateErrorsInBoard(SudokuBoard* board){
 	int n, m, N,col,row, error, curValue;
 	col=0;
@@ -408,7 +413,7 @@ int boardIsEmpty(SudokuBoard* board){
 
 int generateXY(SudokuGame* game,int x, int y){
 	/*x,y<=N*N */
-	int n,m,N,i,ind,try,allSuccess,indX,indY;
+	int n,m,N,i,ind,trial,allSuccess,indX,indY;
 	int* xArray;
 	int* nums;
 	SudokuBoard* solvedBoard;
@@ -420,7 +425,7 @@ int generateXY(SudokuGame* game,int x, int y){
 	N = n*m;
 
 
-	xArray=(int*)calloc((N*N)+1,sizeof(int));
+	xArray=(int*)calloc((N*N)+1,sizeof(int)); /* xArray is array of indexes */
 	if (!xArray){
 		printf("Problem in memory allocating");
 		exit(1);
@@ -430,7 +435,7 @@ int generateXY(SudokuGame* game,int x, int y){
 		printf("Problem in memory allocating");
 		exit(1);
 	}
-	for (try = 0;try<1000;try++){
+	for (trial = 0;trial<1000;trial++){ /* 1000 trials */
 		allSuccess=1;
 		xArray[0]=N*N;
 		for (i = 1; i<=N*N;i++){
@@ -480,12 +485,10 @@ int generateXY(SudokuGame* game,int x, int y){
 void dealWithFullBoard(SudokuGame* game){
 	if (boardHasErrors(game->curBoard->board)==1){
 		printf("Puzzle solution erroneous\n");
-		game->onlyUndoAfterSolvedWithErrors=1;
 	}
 	else{
 		printf("Puzzle solved successfully\n");
-		freeGame(game);
-		initGameInInitMode(game);
+		game->gameMode=0;
 	}
 }
 int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){
@@ -547,7 +550,6 @@ int countNumberOfSolutions(SudokuBoard* board){
 	workStack = createNewEmptyStack(N*N+1);
 	push(workStack, currentNode);
 	while(workStack->numOfElements > 0){
-
 		*currentNode = peek(workStack);
 		if (currentNode->numToCheck>N){  /*crossed all the numbers */
 
@@ -561,7 +563,6 @@ int countNumberOfSolutions(SudokuBoard* board){
 				pop(workStack);
 				increaseHeadOfStackByOne(workStack);
 			}
-
 		}
 		else{
 			if (board->board[currentNode->col][currentNode->row].isFixed==1){
@@ -615,13 +616,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 					increaseHeadOfStackByOne(workStack);
 
 				}
-
 			}
 		}
-
 	}
-
-
 
 	free(currentNode);
 	freeStack(workStack);
@@ -707,7 +704,6 @@ void push(stack* stack, stackNode* nodeToPush){
 	}
 	stack->array[stack->numOfElements]=*nodeToPush;
 	stack->numOfElements++;
-
 }
 stackNode pop(stack* stack){
 	stackNode result;
@@ -735,12 +731,10 @@ int isEmpty(stack* stack){
 	return (stack->numOfElements==0);
 }
 void freeStack(stack* stack){
-
 	free(stack->array);
 	free(stack);
 }
 void increaseHeadOfStackByOne(stack* stacker){
-
 	stackNode* res = (stackNode*)calloc (1, sizeof(stackNode));
 	if (!res){
 		printf("Problem in memory allocating");

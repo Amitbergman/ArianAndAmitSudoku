@@ -43,6 +43,7 @@ stackNode peek(stack* stack);
 stack* createNewEmptyStack();
 int isEmpty(stack* stack);
 void freeStack(stack* stack);
+void changeToEmptyGameInInitMode(SudokuGame* game);
 void increaseHeadOfStackByOne(stack* stacker);
-
+SudokuGame* initGameInInitMode();
 #endif /* GAMEUTILS_H_ */
