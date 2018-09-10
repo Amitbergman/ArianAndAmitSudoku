@@ -253,6 +253,8 @@ int getSingleValueToInsert(SudokuBoard* board, int col, int row){
 	}
 	return -1;
 }
+
+/* return 0 if value is not legal and 1 if is legal */
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	int n,m,N,i,x;
 	n = board->n;
@@ -273,6 +275,8 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	return x;
 
 }
+
+/* return 0 if value is not legal inside box and 1 if is legal */
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
 	int startCol,startRow, i,j;
 	startCol= (col/n)*n;
@@ -413,7 +417,7 @@ int boardIsEmpty(SudokuBoard* board){
 
 int generateXY(SudokuGame* game,int x, int y){
 	/*x,y<=N*N */
-	int n,m,N,i,ind,trial,allSuccess,indX,indY;
+	int n,m,N,i,ind,try,allSuccess,indX,indY;
 	int* xArray;
 	int* nums;
 	SudokuBoard* solvedBoard;
@@ -424,31 +428,24 @@ int generateXY(SudokuGame* game,int x, int y){
 	m = board->m;
 	N = n*m;
 
-
-	xArray=(int*)calloc((N*N)+1,sizeof(int)); /* xArray is array of indexes */
-	if (!xArray){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
+	xArray=(int*)calloc((N*N)+1,sizeof(int));
 	nums=(int*)calloc(N+1,sizeof(int));
-	if (!nums){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	for (trial = 0;trial<1000;trial++){ /* 1000 trials */
+
+	for (try = 0;try<1000;try++){
 		allSuccess=1;
 		xArray[0]=N*N;
-		for (i = 1; i<=N*N;i++){
-			xArray[i]=i;
-		}
+		for (i = 1; i<N*N;i++){
+			xArray[i]=i-1;
+		}  /* xArray = an array of [arraySize,0,...,N*N-1] */
 		nums[0]=N;
 		for (i = 1; i<=N;i++){
 			nums[i]=i;
-		}
+		}  /* nums = an array of [arraySize,0,...,N] */
 		for (i = 0; i<x;i++){
-			ind=getRandIndex(xArray);
+			ind=getRandIndex(xArray); /* get rand num in range [0,N*N] */
 			indX=xArray[ind]/N;
 			indY=xArray[ind]%N;
+			/* indX,indY in range [1,N] */
 
 			if((manageArray(xArray,ind)==0)||(getPlausibleNums(draftBoard,indX,indY,nums)==0)){
 				allSuccess=0;  /* failed to find a legal value for one of the board[indX][indY] */
@@ -626,21 +623,26 @@ int countNumberOfSolutions(SudokuBoard* board){
 	return counter;
 }
 
+/*given array and index, shifts left all values right to index.
+	 *  returns new array size defacto. if returns 0 than array is empty*/
 int manageArray(int* arr, int ind){
-	/*given array and index, shifts left all values right to index.
-	 *  returns new array size defacto. */
-	int i=ind;
+	/* ind is in range [1,arr[0]] */
+	int i;
 	if(arr[0]==0){
 		return 0;
 	}
-	for (;i<=arr[0];i++){
+	for (i=ind;i<arr[0];i++){
 		arr[i]=arr[i+1];
 	}
 	arr[0]--;
 	return arr[0];
 }
 int getRandIndex(int* Arr){
-	/*returns a random index from the list (based on optional indexes) for the random board generator */
+	/*returns a random index from the list
+	 * in range [1,size] ; size=Arr[0].
+	 * (based on optional indexes)
+	 * for the random board generator.
+	 *  */
 	int size=Arr[0];
 	int ran=0;
 
@@ -659,8 +661,14 @@ void clearYCells(SudokuBoard* board, int y, int N){
 	}
 	xArray[0]=N*N;
 	for (i = 1; i<=N*N;i++){
-		xArray[i]=i;
+		xArray[i]=i-1;
 	}
+	for (i=0;i<y;i++){
+		ind=getRandIndex(xArray);
+		board->board[xArray[ind]/N][xArray[ind]%N].content=0;
+		manageArray(xArray,ind);
+	}
+	/*
 	while(y>0){
 		ind=getRandIndex(xArray);
 		if(board->board[ind/N][ind%N].content>0){
@@ -668,6 +676,7 @@ void clearYCells(SudokuBoard* board, int y, int N){
 			y--;
 		}
 	}
+	*/
 	free(xArray);
 }
 stackNode* getNewStackNode(int col, int row, int numToCheck){
