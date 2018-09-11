@@ -510,7 +510,7 @@ int num_solutions(SudokuBoard* board){
 	j=0;
 	if (boardHasErrors(board)==1){
 		printf("Error: board contains erroneous values\n");
-		return -1;
+		return 0;
 	}
 	workBoard =  duplicateBoard(board);
 	n=board->n;
@@ -542,6 +542,7 @@ int countNumberOfSolutions(SudokuBoard* board){
 	int counter,n,m,N;
 	stack* workStack;
 	stackNode* currentNode;
+	stackNode* nodeToPush;
 	counter=0;
 	m = board->m;
 	n = board->n;
@@ -579,7 +580,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 								push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
 							}
 							else{
-								push(workStack, getNewStackNode(0, currentNode->row+1, 1));
+								nodeToPush = getNewStackNode(0, currentNode->row+1, 1);
+								push(workStack,nodeToPush );
+								free(nodeToPush);
 
 							}
 						}
@@ -597,16 +600,21 @@ int countNumberOfSolutions(SudokuBoard* board){
 					if (currentNode->col==N-1&&currentNode->row==N-1){
 						counter++;
 						board->board[currentNode->col][currentNode->row].content=0;
+						/* maybe to change that pop will get reference */
 						pop(workStack);
 						increaseHeadOfStackByOne(workStack);
 					}
 					else{
 						board->board[currentNode->col][currentNode->row].content=currentNode->numToCheck;
 						if (currentNode->col!=N-1){
-							push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
+							nodeToPush = getNewStackNode(currentNode->col+1, currentNode->row, 1);
+							push(workStack, nodeToPush);
+							free(nodeToPush);
 						}
 						else{
-							push(workStack, getNewStackNode(0, currentNode->row+1, 1));
+							nodeToPush = getNewStackNode(0, currentNode->row+1, 1);
+							push(workStack,nodeToPush);
+							free(nodeToPush);
 
 						}
 					}
