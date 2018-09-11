@@ -1,10 +1,3 @@
-/*
- * gameUtils.h
- *
- *  Created on: Aug 17, 2018
- *      Author: User
- */
-
 #ifndef GAMEUTILS_H_
 #define GAMEUTILS_H_
 

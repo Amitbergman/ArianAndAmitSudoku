@@ -1,9 +1,3 @@
-/*
- * ActionsHistory.c
- *
- *  Created on: Aug 17, 2018
- *      Author: User
- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

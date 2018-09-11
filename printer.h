@@ -1,10 +1,3 @@
-/*
- * printer.h
- *
- *  Created on: 12 ×‘×�×•×’ 2018
- *      Author: arian
- */
-
 #ifndef PRINTER_H_
 #define PRINTER_H_
 
@@ -28,8 +21,5 @@ void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors);
 
 /*prints the sudoku board of the game */
 void sudokuBoardPrinter (SudokuGame* game);
-
-
-
 
 #endif /* PRINTER_H_ */

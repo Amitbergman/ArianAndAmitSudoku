@@ -1,10 +1,3 @@
-/*
- * printer.c
- *
- *  Created on: 12 ×‘×�×•×’ 2018
- *      Author: arian
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

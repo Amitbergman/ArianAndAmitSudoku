@@ -1,10 +1,3 @@
-/*
- * structs.h
- *
- *  Created on: 17 ×‘×�×•×’ 2018
- *      Author: arian
- */
-
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
 
