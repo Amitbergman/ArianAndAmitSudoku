@@ -10,6 +10,7 @@
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "structs.h"
+#include "gameUtils.h"
 
 Node* GetNewNode(SudokuBoard* x) {
 	Node* newNode = (Node*)calloc(1,sizeof(Node));
