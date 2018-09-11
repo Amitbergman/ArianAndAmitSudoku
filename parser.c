@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -114,6 +113,7 @@ int parseit(SudokuGame* game, char* str){
 				return 0;
 			}
 		}
+
 		setXYZ(game,a);
 
 		free(a);
