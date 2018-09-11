@@ -110,14 +110,17 @@ void setXYZ(SudokuGame* game, int* a){
 }
 
 void validate(SudokuBoard* board){
+	SudokuBoard* result;
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
-	if (gurobi(board)==NULL){
+	result = gurobi(board);
+	if (result==NULL){
 		printf("Validation failed: board is unsolvable\n");
 	}
 	else{
+		freeBoard(result);
 		printf("Validation passed: board is solvable\n");
 	}
 }
@@ -750,14 +753,7 @@ void freeStack(stack* stack){
 	free(stack);
 }
 void increaseHeadOfStackByOne(stack* stacker){
-	stackNode* res = (stackNode*)calloc (1, sizeof(stackNode));
-	if (!res){
-		printf("Problem in memory allocating");
-		exit(1);
 
-	}
-	*res = pop(stacker);
-	res->numToCheck+=1;
-	push(stacker, res);
-	free(res);
+	stacker->array[stacker->numOfElements-1].numToCheck+=1;
+
 }

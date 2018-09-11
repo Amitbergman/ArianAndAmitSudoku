@@ -159,37 +159,6 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 	return result;
 
 }
-
-char* rowToStr(SudokuBoard* sudoku, int rowToPrint ){
-	int i,n,m,N,a;
-	char buffer[1024];
-	char* empty = "";
-	char *row = (char*)calloc(1024, sizeof(char));
-	if (!row){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	n = (*sudoku).n;
-	m = (*sudoku).m;
-	N = n*m;
-	i=0;
-	for (;i<N;i++){
-		strcpy(buffer,empty );
-		a = ((*sudoku).board[rowToPrint][i]).content;
-		if (((*sudoku).board[rowToPrint][i]).isFixed ==1){
-			sprintf(buffer, "%d.", a );
-		}
-		else{
-			sprintf(buffer, "%d", a );
-		}
-		if (i!=N-1){
-			strcat(buffer, " ");
-		}
-		strcat(row,buffer );
-	}
-	return row;
-
-}
 SudokuBoard* newEmptyBoard(int n, int m){
 	int i,j,N;
 	int** a;
@@ -221,16 +190,4 @@ SudokuBoard* newEmptyBoard(int n, int m){
 	}
 	free(a);
 	return res;
-}
-SudokuBoard* stringToSudokuBoard(char * str){
-	char x;
-	char* cur = str;
-
-	while ((*cur) != '\0'){
-
-		cur=cur+1;
-		x = *cur;
-		printf("%c\n", x);
-	}
-	return NULL;
 }
