@@ -19,8 +19,16 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
-		printf("Error: file doesn't exist or cannot be opened\n");
+		if (mode ==1){
+			printf("Error: file doesn't exist or cannot be opened\n");
+
+		}
+		if (mode ==2){
+			printf("Error: file cannot be opened\n");
+
+		}
 		return;
+
 	}
 
 	n =0;
