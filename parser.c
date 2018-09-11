@@ -97,15 +97,22 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: problem while allocating memory");
 			exit(1);
 		}
-		i=0;
-		for(;i<3;i++){
+
+		for(i=0;i<3;i++){
 			token = strtok(NULL, s);
-			if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)||((i<2)&&(atoi(token)==0))){
+			a[i]=atoi(token);
+			if ((token==NULL)||((a[i]==0)&&(strcmp(token,"0")!=0))){
+				printf("Error: invalid command\n");
+				free(a);
+				return 0;
+			}
+		}
+		for(i=0;i<3;i++){
+			if ((a[i]<0)||(a[i]>N)||((i<2)&&(a[i]==0))){
 				printf("Error: value not in range 0-%d\n",N);
 				free(a);
 				return 0;
 			}
-			a[i]=atoi(token);
 		}
 		setXYZ(game,a);
 
@@ -248,12 +255,13 @@ int parseit(SudokuGame* game, char* str){
 
 }
 int checkValidityAndPrint(char* toCheck){
-	int cur=0;
+	int len,cur;
 	if (toCheck==NULL){
 		printf("ERROR: invalid command\n");
 		return 0;
 	}
-	for (;cur<strlen(toCheck);cur++){
+	len=strlen(toCheck);
+	for (cur=0;cur<len;cur++){
 		if (toCheck[cur]!='0'&&toCheck[cur]!='1'){
 			printf("Error: the value should be 0 or 1\n");
 			return 0;
