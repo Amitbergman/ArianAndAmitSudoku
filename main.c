@@ -23,6 +23,8 @@
 /*
 
 *starts the game
+*and waits for commands from the user
+*when this function ends, the game is ended
 
  */
 

@@ -9,7 +9,7 @@
 #include "gurobi.h"
 #include "gameUtils.h"
 
-
+/*recieves a file name and mode and loads the gameboard from the filename to the current game */
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	FILE * fp;
@@ -78,6 +78,11 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	free(curChar);
 }
 
+/*sets the x y cell to be z
+ * when a[0]=x
+ * a[1]=y
+ * a[2]=z
+ *  */
 void setXYZ(SudokuGame* game, int* a){
 
 	SudokuBoard* newBoard;
@@ -109,6 +114,8 @@ void setXYZ(SudokuGame* game, int* a){
 	return;
 }
 
+/*validated the board
+ * and prints the result og the validation */
 void validate(SudokuBoard* board){
 	SudokuBoard* result;
 	if(boardHasErrors(board)){
@@ -125,6 +132,7 @@ void validate(SudokuBoard* board){
 	}
 }
 
+/*give hint to the user */
 void hintXY(SudokuBoard* board, int col, int row){
 	SudokuBoard* solvedBoard=NULL;
 
@@ -149,7 +157,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 	}
 }
 
-
+/*save the current board to the file specified in the variable fileToOpen */
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	int m,n,N,row,col,a,check;
 	FILE * fp;
@@ -197,6 +205,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	/*sudokuBoardPrinter(game); no need to print!  */
 }
 
+/*initializes a geme in init mode */
 SudokuGame* initGameInInitMode(){
 	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
 	if (!game){
@@ -214,6 +223,7 @@ SudokuGame* initGameInInitMode(){
 	return game;
 }
 
+/*free all resources used by game */
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
@@ -221,6 +231,8 @@ void freeGame(SudokuGame* game){
 	free(game);
 }
 
+/*changes the status to empty game in edit mode
+ * used when user writed "edit" */
 void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
@@ -257,7 +269,7 @@ int getSingleValueToInsert(SudokuBoard* board, int col, int row){
 	return -1;
 }
 
-/* return 0 if value is not legal and 1 if is legal */
+/* return 0 if value is not legal and 1 if is legal in the current board */
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	int n,m,N,i,x;
 	n = board->n;
@@ -297,6 +309,8 @@ int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valu
 	return 1;
 
 }
+
+/* executes the autofill command on the game board */
 void autofill(SudokuGame* game){
 	int n,m,N, somethingChanged, col, row,x;
 	SudokuBoard* newBoard;
@@ -348,6 +362,7 @@ void autofill(SudokuGame* game){
 	}
 }
 
+/* returns 1 iff board has errors */
 int boardHasErrors(SudokuBoard* board){
 	int i,j,n,m,N;
 	n = board->n;
@@ -363,6 +378,7 @@ int boardHasErrors(SudokuBoard* board){
 	return 0;
 }
 
+/* goes through all board and updates cells that are errors */
 void updateErrorsInBoard(SudokuBoard* board){
 	int n, m, N,col,row, error, curValue;
 	col=0;
@@ -389,6 +405,8 @@ void updateErrorsInBoard(SudokuBoard* board){
 	}
 
 }
+
+/* returns 1 iff board is full with values */
 int boardIsFull(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;
@@ -403,6 +421,8 @@ int boardIsFull(SudokuBoard* board){
 	}
 	return 1;
 }
+
+/* returns 1 iff board is empty */
 int boardIsEmpty(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;
@@ -418,6 +438,7 @@ int boardIsEmpty(SudokuBoard* board){
 	return 1;
 }
 
+/* executes the generate command as written in the project description */
 int generateXY(SudokuGame* game,int x, int y){
 	/*x,y<=N*N */
 	int n,m,N,i,ind,try,allSuccess,indX,indY;
@@ -482,6 +503,8 @@ int generateXY(SudokuGame* game,int x, int y){
 	return 0;
 }
 
+/* gets a full board, checks if it is successfully solved or not
+ * and acts like we were told in the project description */
 void dealWithFullBoard(SudokuGame* game){
 	if (boardHasErrors(game->curBoard->board)==1){
 		printf("Puzzle solution erroneous\n");
@@ -491,6 +514,8 @@ void dealWithFullBoard(SudokuGame* game){
 		game->gameMode=0;
 	}
 }
+
+/* returns the number of numbers that fit to the x,y cell */
 int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){
 	int i=1;
 	while(i<=pNums[0]){  /* pNums[0]=N init */
@@ -503,6 +528,9 @@ int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums){
 	}
 	return pNums[0];
 }
+
+/* executes the num_solutions command from the project menu
+ * prints the number of solutions */
 int num_solutions(SudokuBoard* board){
 	SudokuBoard* workBoard;
 	int i, j,n,m,N,result;
@@ -537,6 +565,8 @@ int num_solutions(SudokuBoard* board){
 	return result;
 
 }
+
+/* gets a board and counts the number of possible solutions */
 int countNumberOfSolutions(SudokuBoard* board){
 
 	int counter,n,m,N;
@@ -649,12 +679,14 @@ int manageArray(int* arr, int ind){
 	arr[0]--;
 	return arr[0];
 }
+
+/*returns a random index from the list
+ * in range [1,size] ; size=Arr[0].
+ * (based on optional indexes)
+ * for the random board generator.
+ *  */
 int getRandIndex(int* Arr){
-	/*returns a random index from the list
-	 * in range [1,size] ; size=Arr[0].
-	 * (based on optional indexes)
-	 * for the random board generator.
-	 *  */
+
 	int size=Arr[0];
 	int ran=0;
 
@@ -664,6 +696,8 @@ int getRandIndex(int* Arr){
 
 	return ran;
 }
+
+
 void clearYCells(SudokuBoard* board, int y, int N){
 	int i,ind;
 	int* xArray=(int*)calloc((N*N)+1,sizeof(int));
@@ -691,6 +725,8 @@ void clearYCells(SudokuBoard* board, int y, int N){
 	*/
 	free(xArray);
 }
+
+/* returns a new stackNode */
 stackNode* getNewStackNode(int col, int row, int numToCheck){
 	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
 	if (!result){
@@ -703,6 +739,7 @@ stackNode* getNewStackNode(int col, int row, int numToCheck){
 	return result;
 }
 
+/* returns a new empty stack */
 stack* createNewEmptyStack(int max_num){
 	stack* result = (stack*)calloc(1, sizeof(stack));
 	if (!result){
@@ -718,6 +755,8 @@ stack* createNewEmptyStack(int max_num){
 	result->max_num=max_num;
 	return result;
 }
+
+/* pushes the node to the stack */
 void push(stack* stack, stackNode* nodeToPush){
 	if(stack->numOfElements==stack->max_num){
 		if ((realloc(stack->array, 2*stack->max_num)==NULL)){
@@ -731,6 +770,8 @@ void push(stack* stack, stackNode* nodeToPush){
 
 
 }
+
+/* pops from the stack and returns the popped node */
 stackNode pop(stack* stack){
 	stackNode result;
 	assert (stack->numOfElements>0);
@@ -739,28 +780,20 @@ stackNode pop(stack* stack){
 	return result;
 
 }
+
+/* peek in the head of the stack*/
 stackNode* peek(stack* stack){
 	return &(stack->array[stack->numOfElements-1]);
 }
-stackNode* copyNode(stackNode* nodeToCopy){
-	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
-	if (!result){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	result->col = nodeToCopy->col;
-	result->numToCheck=nodeToCopy->numToCheck;
-	result->row=nodeToCopy->row;
-	return result;
-}
-int isEmpty(stack* stack){
-	return (stack->numOfElements==0);
-}
+
+/* frees the stack  and its content after we finish using it*/
 void freeStack(stack* stack){
 
 	free(stack->array);
 	free(stack);
 }
+
+/* increases the number to check in the head of the stacy by 1*/
 void increaseHeadOfStackByOne(stack* stacker){
 
 	stacker->array[stacker->numOfElements-1].numToCheck+=1;
