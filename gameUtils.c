@@ -577,7 +577,9 @@ int countNumberOfSolutions(SudokuBoard* board){
 						}
 						else{
 							if (currentNode->col!=N-1){
-								push(workStack, getNewStackNode(currentNode->col+1, currentNode->row, 1));
+								nodeToPush = getNewStackNode(currentNode->col+1, currentNode->row, 1);
+								push(workStack, nodeToPush );
+								free(nodeToPush);
 							}
 							else{
 								nodeToPush = getNewStackNode(0, currentNode->row+1, 1);
