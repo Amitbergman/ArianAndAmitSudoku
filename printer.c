@@ -5,15 +5,15 @@
  *      Author: arian
  */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "printer.h"
 #include "structs.h"
+#include "gameUtils.h"
 
-
+/*prints a seperator row between real rows */
 void printSeperatorRow (int m, int N)
 {
 	/*Prints the delimeter between rows */
@@ -25,6 +25,7 @@ void printSeperatorRow (int m, int N)
 
 }
 
+/*prints a cell of the sudoku */
 void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkErrorsSetToOne)
 {
 	printf (" ");
@@ -53,6 +54,7 @@ void printCell (SudokuCell cellToPrint, int isInEditModeOrMarkErrorsSetToOne)
 	}
 }
 
+/*prints a real row of the sudoku */
 void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors)
 {
 
@@ -76,18 +78,7 @@ void printRealRow (SudokuBoard * boardPointer, int rowToPrint, int markErrors)
 
 }
 
-SudokuCell* createNewCell(int content, int isFixed, int isError){
-	SudokuCell * cellRef = (SudokuCell*)calloc(1, sizeof(SudokuCell));
-	if (!cellRef){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-		(*cellRef).content=content;
-		(*cellRef).isError=isError;
-		(*cellRef).isFixed=isFixed;
-		return cellRef;
-}
-
+/*prints the sudoku board of the game */
 void sudokuBoardPrinter (SudokuGame* game)
 {
 
@@ -120,74 +111,3 @@ void sudokuBoardPrinter (SudokuGame* game)
 	}
 }
 
-SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
-	int i,j,N;
-	SudokuCell* currentCell;
-
-	SudokuBoard* result = (SudokuBoard*)calloc(1, sizeof(SudokuBoard));
-	if(result==NULL){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	(*result).n=n;
-	(*result).m=m;
-	N = n*m;
-	(*result).board = (SudokuCell **) calloc (N, sizeof (SudokuCell *));
-	if ((*result).board==NULL){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	i = 0;
-	for (;i<N;i++){
-		j=0;
-		((*result).board)[i] = (SudokuCell *) calloc (N, sizeof (SudokuCell));
-		if(((*result).board)[i]==NULL){
-			printf("Problem in memory allocating");
-			exit(1);
-		}
-		for (;j<N;j++){
-			currentCell = createNewCell(array[i][j],0,0);
-			if (currentCell==NULL){
-				printf("Problem in memory allocating");
-				exit(1);
-			}
-			result->board[i][j]=*currentCell;
-			free(currentCell);
-		}
-	}
-
-	return result;
-
-}
-SudokuBoard* newEmptyBoard(int n, int m){
-	int i,j,N;
-	int** a;
-	SudokuBoard* res;
-
-	N=n*m;
-	i=0;
-	a = (int**)calloc(N, sizeof(int*));
-	if (!a){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-
-	for (; i<N;i++){
-		j=0;
-		a[i] = (int *)calloc(N, sizeof(int));
-		if (!(a[i])){
-			printf("Problem in memory allocating");
-			exit(1);
-		}
-		for (; j<N; j++){
-			a[i][j]= 0;
-		}
-	}
-	res= createSudokuBoardFromArray(a,n,m);
-	i=0;
-	for (;i<N;i++){
-		free(a[i]);
-	}
-	free(a);
-	return res;
-}

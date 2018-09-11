@@ -28,7 +28,7 @@ void hintXY(SudokuBoard* board, int x, int y);
 /*save the current board to the file specified in the variable fileToOpen */
 void saveBoardToFile(SudokuGame* game, char* fileToOpen);
 
-/*initializes a geme in init mode */
+/*initializes a game in init mode */
 SudokuGame* initGameInInitMode();
 
 /*free all resources used by game */
@@ -111,20 +111,13 @@ void freeStack(stack* stack);
 /* increases the number to check in the head of the stacy by 1*/
 void increaseHeadOfStackByOne(stack* stacker);
 
+/* creates a new sudokecell*/
+SudokuCell* createNewCell(int content, int isFixed, int isError);
 
+/* creates and returns a new empty sudoku board with n and m as parameters*/
+SudokuBoard* newEmptyBoard(int n, int m);
 
-
-
-
-
-
-
-
-
-void changeToEmptyGameInInitMode(SudokuGame* game);
-
-
-
-SudokuGame* initGameInInitMode();
+/* creates a new sudokuboard from the array of ints specified*/
+SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m);
 
 #endif /* GAMEUTILS_H_ */
