@@ -550,6 +550,7 @@ int countNumberOfSolutions(SudokuBoard* board){
 	currentNode = getNewStackNode(0,0,1);
 	workStack = createNewEmptyStack(N*N+1);
 	push(workStack, currentNode);
+	free(currentNode);
 	while(workStack->numOfElements > 0){
 		*currentNode = peek(workStack);
 		if (currentNode->numToCheck>N){  /*crossed all the numbers */
