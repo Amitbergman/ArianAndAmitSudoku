@@ -105,7 +105,8 @@ void setXYZ(SudokuGame* game, int* a){
 	}
 
 	if (game->curBoard->board->board[a[0]-1][a[1]-1].content==a[2]){
-		return; /* if no change is made, do nothing  */
+		sudokuBoardPrinter(game);
+		return; /* if no change is made, do nothing but print the board  */
 	}
 
 	newBoard=duplicateBoard(game->curBoard->board);
