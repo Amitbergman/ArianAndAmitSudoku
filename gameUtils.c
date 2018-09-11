@@ -48,7 +48,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	(*resBoard).m=m;
 	(*resBoard).n=n;
 
-	curChar = (char *)calloc(1,sizeof(char));
+	curChar = (char *)calloc(2,sizeof(char));
 	if (!curChar){
 		printf("Problem in memory allocating");
 		exit(1);

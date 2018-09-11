@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -98,14 +97,22 @@ int parseit(SudokuGame* game, char* str){
 			exit(1);
 		}
 		i=0;
+		check = 0;
 		for(;i<3;i++){
 			token = strtok(NULL, s);
-			if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)||((i<2)&&(atoi(token)==0))){
-				printf("Error: value not in range 0-%d\n",N);
-				free(a);
+			if (token == NULL){
+				printf("ERROR: invalid command\n");
 				return 0;
 			}
+			if (((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>N)||((i<2)&&(atoi(token)==0))){
+				check=1;
+			}
 			a[i]=atoi(token);
+		}
+		if (check==1){
+			printf("Error: value not in range 0-%d\n",N);
+			free(a);
+			return 0;
 		}
 		setXYZ(game,a);
 
