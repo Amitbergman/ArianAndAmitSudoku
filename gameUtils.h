@@ -39,7 +39,7 @@ stackNode* getNewStackNode(int col, int row, int numToCheck);
 void clearYCells(SudokuBoard* board, int y, int N);
 stackNode pop(stack* stack);
 void push(stack* stack, stackNode* nodeToPush);
-stackNode peek(stack* stack);
+stackNode* peek(stack* stack);
 stack* createNewEmptyStack();
 int isEmpty(stack* stack);
 void freeStack(stack* stack);

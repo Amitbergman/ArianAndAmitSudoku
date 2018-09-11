@@ -552,11 +552,11 @@ int countNumberOfSolutions(SudokuBoard* board){
 	push(workStack, currentNode);
 	free(currentNode);
 	while(workStack->numOfElements > 0){
-		*currentNode = peek(workStack);
+		currentNode = peek(workStack);
 		if (currentNode->numToCheck>N){  /*crossed all the numbers */
 
 			if (currentNode->col==0&&currentNode->row==0){
-				return counter;
+				break;
 			}
 			else{
 				if (board->board[currentNode->col][currentNode->row].isFixed!=1){
@@ -631,9 +631,7 @@ int countNumberOfSolutions(SudokuBoard* board){
 		}
 	}
 
-	free(currentNode);
 	freeStack(workStack);
-
 	return counter;
 }
 
@@ -741,8 +739,8 @@ stackNode pop(stack* stack){
 	return result;
 
 }
-stackNode peek(stack* stack){
-	return stack->array[stack->numOfElements-1];
+stackNode* peek(stack* stack){
+	return &(stack->array[stack->numOfElements-1]);
 }
 stackNode* copyNode(stackNode* nodeToCopy){
 	stackNode* result = (stackNode*)calloc(1, sizeof(stackNode));
