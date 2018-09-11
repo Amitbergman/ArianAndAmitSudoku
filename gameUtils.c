@@ -86,7 +86,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
 	game->history->head = game->curBoard;
 	updateErrorsInBoard(game->curBoard->board);
-	/*sudokuBoardPrinter(game);   no need to print! */
+	sudokuBoardPrinter(game);
 	free(curChar);
 }
 

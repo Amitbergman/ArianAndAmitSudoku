@@ -49,6 +49,7 @@ int parseit(SudokuGame* game, char* str){
 		if (token==NULL){/* edit with no file path */
 
 			changeToEmptyGameInEditMode(game);
+			sudokuBoardPrinter(game);
 			return 0;
 		}
 		loadBoardFromFile(game, token, 2);
