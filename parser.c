@@ -9,7 +9,7 @@
 #include "structs.h"
 #include "ActionsHistory.h"
 
-
+int checkIfLegalToken(char *token);
 /*parses the string for every command line input
  * and chooses the correct function to execute
  * returns 1 for exit and 0 to continue the game
@@ -21,7 +21,7 @@
 int parseit(SudokuGame* game, char* str){
 
 
-	int N, i;
+	int N, i,check;
 	int* a;
 	char *token;
 	const char s[] = " \t\r\n";
@@ -61,9 +61,10 @@ int parseit(SudokuGame* game, char* str){
 			return 0;
 		}
 		token = strtok(NULL, s);
-
-		if ((token==NULL)||((atoi(token)==0)&&(strcmp(token,"0")!=0))||(atoi(token)<0)||(atoi(token)>1)){
+		check = checkIfLegalToken(token);
+		if (check==0){
 			printf("Error: the value should be 0 or 1\n");
+			return 0;
 		}
 		else{
 			game->markErrors=atoi(token);
@@ -240,6 +241,18 @@ int parseit(SudokuGame* game, char* str){
 	printf("ERROR: invalid command\n");
 	return 0;
 
+}
+int checkIfLegalToken(char* toCheck){
+	int cur=0;
+	if (toCheck==NULL){
+		return 0;
+	}
+	for (;cur<strlen(toCheck);cur++){
+		if (toCheck[cur]!='0'&&toCheck[cur]!='1'){
+			return 0;
+		}
+	}
+	return 1;
 }
 
 
