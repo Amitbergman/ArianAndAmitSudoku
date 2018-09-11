@@ -51,6 +51,10 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	for (j=0;j<N;j++){
 		for (i=0;i<N;i++){
 			fscanf(fp, "%d", &curCellContent);
+			if(curCellContent<0||curCellContent>n*m){
+				printf("Error: board file contains ilegal value");
+				exit(1);
+			}
 			(*resBoard).board[i][j].content=curCellContent;
 			(*resBoard).board[i][j].isError=0;
 			fscanf(fp, "%c", curChar);

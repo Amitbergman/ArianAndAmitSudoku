@@ -1,11 +1,3 @@
-/*
-
- * main.c
- *
- *  Created on: May 5, 2018
- *      Author: User
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
