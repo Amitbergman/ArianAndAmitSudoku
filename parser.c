@@ -7,7 +7,7 @@
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
-
+int hasNotNums(char* token);
 int checkValidityAndPrint(char *token);
 /*parses the string for every command line input
  * and chooses the correct function to execute
@@ -96,23 +96,31 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: problem while allocating memory");
 			exit(1);
 		}
-
+		check=0;
 		for(i=0;i<3;i++){
 			token = strtok(NULL, s);
-			a[i]=atoi(token);
-			if ((token==NULL)||((a[i]==0)&&(strcmp(token,"0")!=0))){
+			if (token==NULL){
 				printf("Error: invalid command\n");
 				free(a);
 				return 0;
 			}
-		}
-		for(i=0;i<3;i++){
-			if ((a[i]<0)||(a[i]>N)||((i<2)&&(a[i]==0))){
-				printf("Error: value not in range 0-%d\n",N);
-				free(a);
-				return 0;
+			if (check==0){
+				check=hasNotNums(token);
+			}
+			if (check==0){
+				if (atoi(token)>N||atoi(token)<0||(atoi(token)==0&&(i<2||token[0]!='0'))){
+					check=1;
+				}
+				else{
+					a[i]=atoi(token);
+				}
 			}
 		}
+		if (check==1){
+			printf("Error: value not in range 0-%d\n",N);
+			free(a);
+			return 0;
+			}
 
 		setXYZ(game,a);
 
@@ -269,6 +277,17 @@ int checkValidityAndPrint(char* toCheck){
 	}
 	return 1;
 }
+int hasNotNums(char* toCheck){
+	int len,cur;
 
+	len=strlen(toCheck);
+	for (cur=0;cur<len;cur++){
+		if(toCheck[cur]<48||toCheck[cur]>57){
+			return 1;
+		}
+	}
+	return 0;
+
+}
 
 
