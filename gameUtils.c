@@ -45,8 +45,6 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	}
 	resBoard = newEmptyBoard(n,m);
 	N = n*m;
-	(*resBoard).m=m;
-	(*resBoard).n=n;
 
 	curChar = (char *)calloc(2,sizeof(char));
 	if (!curChar){

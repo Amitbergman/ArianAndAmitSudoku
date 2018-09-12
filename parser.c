@@ -7,6 +7,7 @@
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
+
 int hasNotNums(char* token);
 int checkValidityAndPrint(char *token);
 
@@ -17,11 +18,15 @@ int checkValidityAndPrint(char *token);
 */
 int parseit(SudokuGame* game, char* str){
 
-
 	int N, i,check;
 	int* a;
 	char *token;
 	const char s[] = " \t\r\n";
+	if (strlen(str )>256){
+		printf("ERROR: invalid command\n");
+		return 0;
+
+	}
 	token = strtok(str, s);
 	if (token==NULL){
 		printf("ERROR: invalid command\n");
