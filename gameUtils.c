@@ -168,6 +168,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 	else{
 		printf("Hint: set cell to %d\n",solvedBoard->board[col-1][row-1].content);
 	}
+	freeBoard(solvedBoard);
 }
 
 /*save the current board to the file specified in the variable fileToOpen */
