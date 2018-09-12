@@ -23,6 +23,10 @@ int parseit(SudokuGame* game, char* str){
 	char *token;
 	const char s[] = " \t\r\n";
 	token = strtok(str, s);
+	if (token==NULL){
+		printf("ERROR: invalid command\n");
+		return 0;
+	}
 
 	if(strlen(token)>256){
 		printf("ERROR: invalid command\n");
@@ -188,6 +192,7 @@ int parseit(SudokuGame* game, char* str){
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
+			free(a);
 			exit(1);
 		}
 
@@ -248,6 +253,7 @@ int parseit(SudokuGame* game, char* str){
 		}
 		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
 			printf("Error: board is not empty\n");
+			free(a);
 			return 0;
 		}
 

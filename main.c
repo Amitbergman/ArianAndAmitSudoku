@@ -23,6 +23,7 @@
 int startGame(){
 	int exitTheGame;
 	char* input;
+	char* inputPointer;
 	SudokuGame* game;
 
 	exitTheGame=0;
@@ -35,12 +36,12 @@ int startGame(){
 	while ((exitTheGame==0)&&(!feof(stdin))){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
-
-		while(input[0]==' '){
-			input++;
+		inputPointer=input;
+		while(inputPointer[0]==' '){
+			inputPointer++;
 		}
-		if (strcmp(input, "\n")!=0){
-			exitTheGame=parseit(game,input);
+		if (strcmp(inputPointer, "\n")!=0){
+			exitTheGame=parseit(game,inputPointer);
 		}
 	}
 
