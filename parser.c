@@ -2,14 +2,52 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "main.h"
 #include "printer.h"
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
 
-int hasNotNums(char* token);
-int checkValidityAndPrint(char *token);
+
+
+/*Inner method
+ * used to check if the input for mark errors has only 1's and 0's
+ * as asked in the project description
+*/
+int checkValidityAndPrintForMarkErrors(char* toCheck){
+	int len,cur;
+	if (toCheck==NULL){
+		printf("ERROR: invalid command\n");
+		return 0;
+	}
+	len=strlen(toCheck);
+	for (cur=0;cur<len;cur++){
+		if (toCheck[cur]!='0'&&toCheck[cur]!='1'){
+			printf("Error: the value should be 0 or 1\n");
+			return 0;
+		}
+	}
+	return 1;
+}
+
+/*Inner method
+ * used to check if a string has only numbers
+ * it is used in order to avoid cases in which the user inserts for exaple 1.5
+ * and atoi understands it as 1.
+
+*/
+
+int hasNotNums(char* toCheck){
+	int len,cur;
+
+	len=strlen(toCheck);
+	for (cur=0;cur<len;cur++){
+		if(toCheck[cur]<48||toCheck[cur]>57){
+			return 1;
+		}
+	}
+	return 0;
+
+}
 
 /*parses the string for every command line input
  * and chooses the correct function to execute
@@ -69,7 +107,7 @@ int parseit(SudokuGame* game, char* str){
 		}
 		token = strtok(NULL, s);
 
-		check = checkValidityAndPrint(token);
+		check = checkValidityAndPrintForMarkErrors(token);
 		if (check==0){
 			return 0;
 		}
@@ -311,32 +349,4 @@ int parseit(SudokuGame* game, char* str){
 	return 0;
 
 }
-int checkValidityAndPrint(char* toCheck){
-	int len,cur;
-	if (toCheck==NULL){
-		printf("ERROR: invalid command\n");
-		return 0;
-	}
-	len=strlen(toCheck);
-	for (cur=0;cur<len;cur++){
-		if (toCheck[cur]!='0'&&toCheck[cur]!='1'){
-			printf("Error: the value should be 0 or 1\n");
-			return 0;
-		}
-	}
-	return 1;
-}
-int hasNotNums(char* toCheck){
-	int len,cur;
-
-	len=strlen(toCheck);
-	for (cur=0;cur<len;cur++){
-		if(toCheck[cur]<48||toCheck[cur]>57){
-			return 1;
-		}
-	}
-	return 0;
-
-}
-
 

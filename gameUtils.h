@@ -113,4 +113,7 @@ SudokuBoard* newEmptyBoard(int n, int m);
 /* creates a new sudokuboard from the array of ints specified*/
 SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m);
 
+/*recieves a board and frees all the resources it uses
+ */
+void freeBoard(SudokuBoard* board);
 #endif /* GAMEUTILS_H_ */

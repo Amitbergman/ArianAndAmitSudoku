@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdio.h>
-#include "main.h"
 #include "printer.h"
 #include "ActionsHistory.h"
 #include "gurobi.h"
@@ -126,15 +124,15 @@ void setXYZ(SudokuGame* game, int* a){
 }
 
 /*validated the board
- * and prints the result og the validation */
+ * and prints the result of the validation */
 void validate(SudokuBoard* board){
 	SudokuBoard* result;
 	if(boardHasErrors(board)){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
-	result = gurobi(board);
-	if (result==NULL){
+	result = gurobi(board);/*tries to solve the board */
+	if (result==NULL){/*did not succeed in solving */
 		printf("Validation failed: board is unsolvable\n");
 	}
 	else{
@@ -791,7 +789,11 @@ void push(stack* stack, stackNode* nodeToPush){
 /* pops from the stack and returns the popped node */
 stackNode pop(stack* stack){
 	stackNode result;
-	assert (stack->numOfElements>0);
+	if (stack->numOfElements < 1){
+		printf("No elements in stack");
+		exit(1);
+	}
+
 	result = stack->array[stack->numOfElements-1];
 	stack->numOfElements--;
 	return result;
@@ -903,5 +905,20 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 
 	return result;
 
+}
+
+/*recieves a board and frees all the resources it uses
+ */
+void freeBoard(SudokuBoard* board){
+	int i;
+	int N=(board->m)*(board->n);
+	for (i=0;i<N;i++)
+	{
+
+		free (board->board[i]);
+	}
+	free(board->board);
+	free(board);
+	return;
 }
 

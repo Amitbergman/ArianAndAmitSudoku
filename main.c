@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <time.h>
-#include "main.h"
 #include "structs.h"
 #include "printer.h"
 #include "parser.h"
@@ -11,7 +9,9 @@
 #include "SPBufferset.h"
 #include "gameUtils.h"
 
+int startGame();
 
+int main ();
 /*
 
 *starts the game
