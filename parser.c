@@ -127,7 +127,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: value not in range 0-%d\n",N);
 			free(a);
 			return 0;
-			}
+		}
 
 		setXYZ(game,a);
 
@@ -165,9 +165,11 @@ int parseit(SudokuGame* game, char* str){
 		if(game->gameMode==0){
 			printf("ERROR: invalid command\n");
 		}
+
 		else{
 			resetGame(game);
 		}
+
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
@@ -201,20 +203,37 @@ int parseit(SudokuGame* game, char* str){
 			exit(1);
 		}
 
+		check=0;
 		for(i=0;i<2;i++){
 			token = strtok(NULL, s);
-			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N)){
-				printf("Error: value not in range 0-%d\n",N);
+			if (token==NULL){
+				printf("ERROR: invalid command\n");
 				free(a);
 				return 0;
 			}
-			a[i]=atoi(token);
+			if (check==0){
+				check=hasNotNums(token);
+			}
+			if (check==0){
+				if (atoi(token)>N||atoi(token)<1){
+					check=1;
+				}
+				else{
+					a[i]=atoi(token);
+				}
+			}
 		}
+		if (check==1){
+			printf("Error: value not in range 1-%d\n",N);
+			free(a);
+			return 0;
+		}
+
+
 		hintXY(game->curBoard->board,a[0],a[1]);
 
 		free(a);
 		return 0;
-
 	}
 
 	if (strcmp(token,"num_solutions")==0){
@@ -247,15 +266,34 @@ int parseit(SudokuGame* game, char* str){
 			printf("Error: problem while allocating memory");
 			exit( 1);
 		}
+
+		check=0;
 		for(i=0;i<2;i++){
 			token = strtok(NULL, s);
-			if ((token==NULL)||(atoi(token)<1)||(atoi(token)>N*N)){
-				printf("Error: value not in range 0-%d\n",N*N);
+			if (token==NULL){
+				printf("ERROR: invalid command\n");
 				free(a);
 				return 0;
 			}
-			a[i]=atoi(token);
+			if (check==0){
+				check=hasNotNums(token);
+			}
+			if (check==0){
+				if (atoi(token)>N*N||atoi(token)<0){
+					check=1;
+				}
+				else{
+					a[i]=atoi(token);
+				}
+			}
 		}
+		if (check==1){
+			printf("Error: value not in range 0-%d\n",N*N);
+			free(a);
+			return 0;
+		}
+
+
 		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
 			printf("Error: board is not empty\n");
 			free(a);
@@ -267,6 +305,8 @@ int parseit(SudokuGame* game, char* str){
 		free(a);
 		return 0;
 	}
+
+
 	printf("ERROR: invalid command\n");
 	return 0;
 

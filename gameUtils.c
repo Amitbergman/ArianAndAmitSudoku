@@ -172,6 +172,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 /*save the current board to the file specified in the variable fileToOpen */
 void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	int m,n,N,row,col,a,check;
+	SudokuBoard* solvedBoard;
 	FILE * fp;
 	m = game->curBoard->board->m;
 	n = game->curBoard->board->n;
@@ -182,11 +183,14 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		return;
 	}
 
-	if ((game->gameMode==2)&&(gurobi(game->curBoard->board)==NULL)){
+	solvedBoard=gurobi(game->curBoard->board);
+
+	if ((game->gameMode==2)&&(solvedBoard==NULL)){
 		printf("Error: board validation failed\n");
 		return;
 	}
 
+	freeBoard(solvedBoard);
 
 	fp = fopen(fileToOpen, "w");
 	if (!fp){
@@ -358,6 +362,7 @@ void autofill(SudokuGame* game){
 	/* nothing is changed, just print the board and no other work */
 	if (somethingChanged==0){
 		sudokuBoardPrinter(game);
+		freeBoard(newBoard);
 		return;
 	}
 	printDiffsAutoFill(game->curBoard->board, newBoard);

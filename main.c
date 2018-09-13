@@ -43,6 +43,7 @@ int startGame(){
 		if (strcmp(inputPointer, "\n")!=0){
 			exitTheGame=parseit(game,inputPointer);
 		}
+		inputPointer=NULL;
 	}
 
 	freeGame(game);
