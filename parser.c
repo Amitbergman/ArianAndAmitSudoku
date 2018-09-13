@@ -7,8 +7,6 @@
 #include "structs.h"
 #include "ActionsHistory.h"
 
-
-
 /*Inner method
  * used to check if the input for mark errors has only 1's and 0's
  * as asked in the project description
@@ -52,7 +50,6 @@ int hasNotNums(char* toCheck){
 /*parses the string for every command line input
  * and chooses the correct function to execute
  * returns 1 for exit and 0 to continue the game
-
 */
 int parseit(SudokuGame* game, char* str){
 
@@ -60,7 +57,7 @@ int parseit(SudokuGame* game, char* str){
 	int* a;
 	char *token;
 	const char s[] = " \t\r\n";
-	if (strlen(str )>256){
+	if (str==NULL || strlen(str )>256){
 		printf("ERROR: invalid command\n");
 		return 0;
 
