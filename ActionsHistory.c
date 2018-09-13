@@ -6,17 +6,25 @@
 #include "structs.h"
 #include "gameUtils.h"
 
-Node* GetNewNode(SudokuBoard* x) {
+/*
+ * Returns a new Node of the undo redo list which contains the sudoku board recieved
+ */
+Node* GetNewNode(SudokuBoard* boardToAdd) {
 	Node* newNode = (Node*)calloc(1,sizeof(Node));
 	if (!newNode){
 		printf("Problem in memory allocating");
 		exit(1);
 	}
-	newNode->board = x;
+	newNode->board = boardToAdd;
 	newNode->prev = NULL;
 	newNode->next = NULL;
 	return newNode;
 }
+
+/*
+ * Duplicated the sudokuboard recieved and returns reference to new identical board
+ * we use it for the undo redo list, hence we decided to put it in this module
+ */
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	int i,j,N;
 	SudokuCell* currentCell;
@@ -56,12 +64,20 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	}
 	return newBoard;
 }
+
+/*
+ * resets the list of undo redo of the game
+ */
 void resetGame(SudokuGame* game){
 	game->curBoard=game->history->head;
 	cleanNextNodes(game->curBoard->next);
 	game->curBoard->next=NULL;
 	printf("Board reset\n");
 }
+
+/*
+ * prints the differences between the boards after set or undo or redo
+ */
 void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 	int row,col,N,z1,z2;
 	N=(boardA->m)*(boardA->n);
@@ -84,6 +100,85 @@ void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 		}
 	}
 }
+
+/*Inserts a Node at head of doubly linked list
+ *
+ */
+void InsertAtHead(List* list,SudokuBoard* newContent) {
+	struct Node* newNode = GetNewNode(newContent);
+	if((*list).head == NULL) {
+		(*list).head = newNode;
+		return;
+	}
+	(*list).head->prev = newNode;
+	(*newNode).next = (*list).head;
+	(*list).head = newNode;
+}
+
+/* Inserts a new Node after curNode and cleans next nodes
+ *
+ */
+void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard) {
+	Node* node;
+	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
+	node=GetNewNode(newBoard); /* create new node for new board */
+	node->prev=game->curBoard; /* update prev and next */
+	game->curBoard->next=node;
+	game->curBoard=node;
+}
+
+/* frees the nodes in the list that are after the node in the input
+ *
+ */
+void cleanNextNodes (Node* node){
+	Node* next;
+	if (node==NULL){
+		return;
+	}
+	next=node->next;
+	freeBoard(node->board);
+	cleanNextNodes(next);
+	node->next=NULL;
+	free(node);
+	return;
+}
+
+/*Executes the undo command as describes in the description of the project
+ *
+ */
+void undo (SudokuGame* game){
+	Node *nodeBoard=game->curBoard->prev;
+	if (nodeBoard==NULL){
+		printf("Error: no moves to undo\n");
+	}
+	else{
+		game->curBoard=nodeBoard;
+		sudokuBoardPrinter(game);
+		printDiffs(game->curBoard->next->board, game->curBoard->board, "Undo");
+	}
+	return;
+}
+
+/*Executes the redo command as describes in the description of the project
+ *
+ */
+void redo (SudokuGame* game){
+	Node *nodeBoard=game->curBoard->next;
+	if (nodeBoard==NULL){
+		printf("Error: no moves to redo\n");
+	}
+	else{
+		game->curBoard=nodeBoard;
+		sudokuBoardPrinter(game);
+		printDiffs(game->curBoard->prev->board, game->curBoard->board, "Redo");
+	}
+	return;
+}
+
+
+/*
+ * prints the differences between the boards after autodfill
+ */
 void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
 	int row, col,N,z1,z2;
 	row=0;
@@ -100,119 +195,6 @@ void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
 			}
 		}
 	}
-}
-
-
-SudokuBoard* supplyEmptyNonNBoard(int N, int sqrt){
-	int i,j;
-	int **arr = (int**)calloc(N,sizeof(int*));
-	if (!arr){
-		printf("Problem in memory allocating");
-		exit(1);
-	}
-	i=0;
-	for (;i<N;i++){
-		j=0;
-		arr[i] = (int*)calloc(N,sizeof(int));
-		if(!(arr[i])){
-			printf("Problem in memory allocating");
-			exit(1);
-		}
-		for(;j<N;j++)
-		{
-			arr[i][j]=0;
-		}
-	}
-	return createSudokuBoardFromArray(arr, sqrt, sqrt);
-}
-/*Inserts a Node at head of doubly linked list
- *
- */
-void InsertAtHead(List* list,SudokuBoard* newContent) {
-	struct Node* newNode = GetNewNode(newContent);
-	if((*list).head == NULL) {
-		(*list).head = newNode;
-		return;
-	}
-	(*list).head->prev = newNode;
-	(*newNode).next = (*list).head;
-	(*list).head = newNode;
-}
-
-/* Inserts a Node at tail of Doubly linked list
- *
- */
-void InsertAtTail(List *list,SudokuBoard* x) {
-	Node* temp;
-	Node* newNode;
-	temp = (*list).head;
-	newNode = GetNewNode(x);
-	if((*list).head == NULL) {
-		(*list).head = newNode;
-		return;
-	}
-	while(temp->next != NULL) temp = temp->next; /* Go To last Node */
-	temp->next = newNode;
-	newNode->prev = temp;
-}
-/* Inserts a new Node after curNode and cleans next nodes
- *
- */
-void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard) {
-	Node* node;
-	cleanNextNodes(game->curBoard->next); /* free proceeding nodes in history list */
-	node=GetNewNode(newBoard); /* create new node for new board */
-	node->prev=game->curBoard; /* update prev and next */
-	game->curBoard->next=node;
-	game->curBoard=node;
-}
-void cleanNextNodes (Node* node){
-	Node* next;
-	if (node==NULL){
-		return;
-	}
-	next=node->next;
-	freeBoard(node->board);
-	cleanNextNodes(next);
-	node->next=NULL;
-	free(node);
-	return;
-}
-void freeBoard(SudokuBoard* board){
-	int i;
-	int N=(board->m)*(board->n);
-	for (i=0;i<N;i++)
-	{
-
-		free (board->board[i]);
-	}
-	free(board->board);
-	free(board);
-	return;
-}
-void undo (SudokuGame* game){
-	Node *nodeBoard=game->curBoard->prev;
-	if (nodeBoard==NULL){
-		printf("Error: no moves to undo\n");
-	}
-	else{
-		game->curBoard=nodeBoard;
-		sudokuBoardPrinter(game);
-		printDiffs(game->curBoard->next->board, game->curBoard->board, "Undo");
-	}
-	return;
-}
-void redo (SudokuGame* game){
-	Node *nodeBoard=game->curBoard->next;
-	if (nodeBoard==NULL){
-		printf("Error: no moves to redo\n");
-	}
-	else{
-		game->curBoard=nodeBoard;
-		sudokuBoardPrinter(game);
-		printDiffs(game->curBoard->prev->board, game->curBoard->board, "Redo");
-	}
-	return;
 }
 
 
