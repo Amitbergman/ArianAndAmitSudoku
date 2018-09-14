@@ -9,9 +9,7 @@
 #include "SPBufferset.h"
 #include "gameUtils.h"
 
-int startGame();
 
-int main ();
 /*
 
 *starts the game

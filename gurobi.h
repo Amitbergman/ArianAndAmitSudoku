@@ -1,10 +1,3 @@
-/*
- * gurobi.h
- *
- *  Created on: 22 באוג 2018
- *      Author: arian
- */
-
 #ifndef GUROBI_H_
 #define GUROBI_H_
 #include <stdlib.h>

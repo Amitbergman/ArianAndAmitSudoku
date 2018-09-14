@@ -7,6 +7,38 @@
 #include "gurobi.h"
 #include "gameUtils.h"
 
+/*
+ * This module is responsible for functions that are related to the flow of the game
+ *
+ */
+
+/*
+ * made all functions declarations that are not in the .h file here.
+ * did this to keep the order and all declarations together.
+ * the documentation as asked in the project description is attached to the implementation of every function we created.
+ */
+void dealWithFullBoard(SudokuGame* game);
+stackNode* getNewStackNode(int col, int row, int numToCheck);
+int boardIsFull(SudokuBoard* board);
+int getPlausibleNums(SudokuBoard* board,int x, int y, int* pNums);
+stack* createNewEmptyStack(int max_num);
+void push(stack* stack, stackNode* nodeToPush);
+void freeStack(stack* stack);
+stackNode pop(stack* stack);
+void increaseHeadOfStackByOne(stack* stacker);
+SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m);
+stackNode* peek(stack* stack);
+SudokuBoard* newEmptyBoard(int n, int m);
+void clearYCells(SudokuBoard* board, int y, int N);
+void updateErrorsInBoard(SudokuBoard* board);
+int boardHasErrors(SudokuBoard* board);
+int manageArray(int* arr, int ind);
+int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck);
+int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck);
+int getRandIndex(int* Arr);
+int countNumberOfSolutions(SudokuBoard* board);
+
+
 /*recieves a file name and mode and loads the gameboard from the filename to the current game */
 void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 
@@ -907,7 +939,7 @@ SudokuBoard* createSudokuBoardFromArray(int ** array, int n, int m){
 
 }
 
-/*recieves a board and frees all the resources it uses
+/*receives a board and frees all the resources it uses
  */
 void freeBoard(SudokuBoard* board){
 	int i;

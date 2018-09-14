@@ -7,6 +7,15 @@
 #include "gameUtils.h"
 
 /*
+ * This module is responsible for functions that are related to the undo and redo list
+ * the implementation consists of a doubly linked list of nodes that saves the actions changed
+ *
+ */
+
+void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo);
+
+
+/*
  * Returns a new Node of the undo redo list which contains the sudoku board recieved
  */
 Node* GetNewNode(SudokuBoard* boardToAdd) {

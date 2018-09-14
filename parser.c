@@ -10,6 +10,7 @@
 /*Inner method
  * used to check if the input for mark errors has only 1's and 0's
  * as asked in the project description
+ * the implementation consists of going in a loop over the characters and check if each one of them is 0 or 1.
 */
 int checkValidityAndPrintForMarkErrors(char* toCheck){
 	int len,cur;
@@ -31,9 +32,9 @@ int checkValidityAndPrintForMarkErrors(char* toCheck){
  * used to check if a string has only numbers
  * it is used in order to avoid cases in which the user inserts for exaple 1.5
  * and atoi understands it as 1.
+ * the implementation consists of going through the string and check if everychar is a number (0-9).
 
 */
-
 int hasNotNums(char* toCheck){
 	int len,cur;
 
@@ -47,13 +48,17 @@ int hasNotNums(char* toCheck){
 
 }
 
-/*parses the string for every command line input
- * and chooses the correct function to execute
+/*this functions receives the string the user entered
+ * and decided the correct function to execute
+ *
  * returns 1 for exit and 0 to continue the game
+ * The implementation is with comparing the string to the words of the commands as described in the project description.
+ * after we compared the string we check if it is in the correct format as describes in the project description
+ * if the format is correct, we execute the right function from the gameUtils.
 */
 int parseit(SudokuGame* game, char* str){
 
-	int N, i,check;
+	int N, i,check,y;
 	int* a;
 	char *token;
 	const char s[] = " \t\r\n";
@@ -335,8 +340,15 @@ int parseit(SudokuGame* game, char* str){
 			return 0;
 		}
 
-		generateXY(game,a[0],a[1]);
 
+		N = game->curBoard->board->m*game->curBoard->board->n;
+		y = N*N-a[1];
+		if (a[1]>0){
+			generateXY(game,a[0],y);
+		}
+		else{
+			sudokuBoardPrinter(game);
+		}
 		free(a);
 		return 0;
 	}

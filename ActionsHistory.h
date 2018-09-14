@@ -29,12 +29,6 @@ Node* GetNewNode(SudokuBoard* x);
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard);
 
 
-/*
- * prints the differences between the boards after undo or redo
- */
-void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo);
-
-
 /* Inserts a new Node after curNode and cleans next nodes
  *
  */
