@@ -12,11 +12,17 @@
  *
  */
 
+
+/*
+ * only the declaration of the function - full documentation is abpve the omplementation
+ */
 void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo);
 
 
 /*
- * Returns a new Node of the undo redo list which contains the sudoku board recieved
+ * Returns a new Node of the undo redo list which contains the sudoku board received
+ * the implementation consists of allocating memory to the node and putting the needed values in the node
+ * and at the end returning the new node created.
  */
 Node* GetNewNode(SudokuBoard* boardToAdd) {
 	Node* newNode = (Node*)calloc(1,sizeof(Node));
@@ -31,8 +37,9 @@ Node* GetNewNode(SudokuBoard* boardToAdd) {
 }
 
 /*
- * Duplicated the sudokuboard recieved and returns reference to new identical board
+ * Duplicates the sudoku board received and returns reference to new identical board
  * we use it for the undo redo list, hence we decided to put it in this module
+ * the implmentation consists of 2 nested loops that go over the old board and copy it tp the new one.
  */
 SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 	int i,j,N;
@@ -76,6 +83,8 @@ SudokuBoard* duplicateBoard(SudokuBoard* oldBoard) {
 
 /*
  * resets the list of undo redo of the game
+ * also free and delete the nodes from the list
+ * at the end of the function, the undo redo list is empty as requested
  */
 void resetGame(SudokuGame* game){
 	game->curBoard=game->history->head;
@@ -86,6 +95,8 @@ void resetGame(SudokuGame* game){
 
 /*
  * prints the differences between the boards after set or undo or redo
+ * the function goes over the board in a loop and finds the difference
+ * then it prints the difference as requested
  */
 void printDiffs(SudokuBoard* boardA, SudokuBoard* boardB, char* undoRedo) {
 	int row,col,N,z1,z2;
@@ -125,6 +136,10 @@ void InsertAtHead(List* list,SudokuBoard* newContent) {
 }
 
 /* Inserts a new Node after curNode and cleans next nodes
+ * it is uset to set a new node after set or autofill command is called by the user
+ * the implementation is selfexplenatory but anyway:
+ * it puts a new node after the current one
+ * and clears all the nodes that were there bufore using the cleanNextNodes function.
  *
  */
 void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard) {
@@ -137,7 +152,7 @@ void InsertBoardNextNode(SudokuGame* game,SudokuBoard* newBoard) {
 }
 
 /* frees the nodes in the list that are after the node in the input
- *
+ * recursive implementation as we learned in class
  */
 void cleanNextNodes (Node* node){
 	Node* next;
@@ -153,7 +168,7 @@ void cleanNextNodes (Node* node){
 }
 
 /*Executes the undo command as describes in the description of the project
- *
+ * moves the pointer in the list, and updates the current board.
  */
 void undo (SudokuGame* game){
 	Node *nodeBoard=game->curBoard->prev;
@@ -169,7 +184,8 @@ void undo (SudokuGame* game){
 }
 
 /*Executes the redo command as describes in the description of the project
- *
+ *moves the pointer forward if possible
+ *moves if not, prints that no moves to redo
  */
 void redo (SudokuGame* game){
 	Node *nodeBoard=game->curBoard->next;
@@ -186,7 +202,8 @@ void redo (SudokuGame* game){
 
 
 /*
- * prints the differences between the boards after autodfill
+ * prints the differences between the boards after autodfill command
+ *
  */
 void printDiffsAutoFill(SudokuBoard* boardA, SudokuBoard* boardB) {
 	int row, col,N,z1,z2;

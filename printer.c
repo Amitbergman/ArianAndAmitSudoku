@@ -5,6 +5,11 @@
 #include "printer.h"
 #include "structs.h"
 #include "gameUtils.h"
+ /* This module is responsible for printing the board as requested in
+  * the project description
+ *
+ */
+
 
 /*prints a seperator row between real rows */
 void printSeperatorRow (int m, int N)

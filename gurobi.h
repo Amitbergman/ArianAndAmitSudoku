@@ -8,7 +8,9 @@
 #include "ActionsHistory.h"
 #include "structs.h"
 
-
+/* this function gets a board and solves it with ILP
+ * as described in the project description
+ * if the board is not solvable it returns NULL */
 SudokuBoard* gurobi(SudokuBoard* board);
 
 

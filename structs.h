@@ -1,5 +1,9 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
+ /* This module is responsible for the declarations of all
+  * the structs we use in our project.
+ */
+
 
 /*type of a cell to be used inside the board */
 typedef struct SudokuCell

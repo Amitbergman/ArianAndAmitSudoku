@@ -50,11 +50,11 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	fp = fopen (fileToOpen, "r");
 	if (!fp){
 		if (mode ==1){
-			printf("Error: file doesn't exist or cannot be opened\n");
+			printf("Error: File doesn't exist or cannot be opened\n");
 
 		}
 		if (mode ==2){
-			printf("Error: file cannot be opened\n");
+			printf("Error: File cannot be opened\n");
 
 		}
 		return;
@@ -65,11 +65,13 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	m =0 ;
 	check = fscanf(fp, "%d", &m);
 	if (check!=1){
+		/* could not find the m number */
 		printf("Problem with the format of the file being read");
 		exit(1);
 	}
 	fscanf(fp, "%d", &n);
 	if (check!=1){
+		/* could not find the n number */
 		printf("Problem with the format of the file being read");
 		exit(1);
 	}
@@ -84,16 +86,19 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	}
 	(*game).gameMode = mode;
 	curCellContent=0;
+	/* goes over the file and puts values into the array, while creating sudoku cells and board */
 	for (j=0;j<N;j++){
 		for (i=0;i<N;i++){
 			fscanf(fp, "%d", &curCellContent);
 			if(curCellContent<0||curCellContent>n*m){
-				printf("Error: board file contains ilegal value");
+				/* wrong value or missing number */
+				printf("Error: board format in wrong");
 				exit(1);
 			}
 			(*resBoard).board[i][j].content=curCellContent;
 			(*resBoard).board[i][j].isError=0;
 			fscanf(fp, "%c", curChar);
+			/* check for fixed cell */
 			if (strcmp(curChar, ".")==0&&game->gameMode!=2){
 				(*resBoard).board[i][j].isFixed=1;
 				fscanf(fp, "%c", curChar);
@@ -113,7 +118,8 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 	game->curBoard=GetNewNode(resBoard);
 
 	game->history->head = game->curBoard;
-	updateErrorsInBoard(game->curBoard->board);
+
+	updateErrorsInBoard(game->curBoard->board); /* need to check if there are errors in the board */
 	sudokuBoardPrinter(game);
 	free(curChar);
 }
@@ -122,6 +128,11 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
  * when a[0]=x
  * a[1]=y
  * a[2]=z
+ *
+ * the implementation includes validation of the numbers given
+ *
+ *
+ *
  *  */
 void setXYZ(SudokuGame* game, int* a){
 
@@ -145,7 +156,8 @@ void setXYZ(SudokuGame* game, int* a){
 	InsertBoardNextNode(game,newBoard);
 
 	sudokuBoardPrinter(game); /*print */
-
+	/* if the board is ful need to check if it is solved correctly and bahave
+	 * like written in the project description */
 	if (game->gameMode==1){
 		if (boardIsFull(game->curBoard->board)==1){
 			dealWithFullBoard(game);
@@ -155,8 +167,10 @@ void setXYZ(SudokuGame* game, int* a){
 	return;
 }
 
-/*validated the board
- * and prints the result of the validation */
+/*validates the board
+ * and prints the result of the validation
+ * the implementation is with the function gurobi which solves the board
+ * if the board has errors we dont even try to solve it */
 void validate(SudokuBoard* board){
 	SudokuBoard* result;
 	if(boardHasErrors(board)){
@@ -173,7 +187,9 @@ void validate(SudokuBoard* board){
 	}
 }
 
-/*give hint to the user */
+/*give hint to the user
+ * runs an ILP with gurobi and gets a solutions to the board
+ * then if the board is solvable, gives the user a hint  */
 void hintXY(SudokuBoard* board, int col, int row){
 	SudokuBoard* solvedBoard=NULL;
 
@@ -191,6 +207,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 	}
 	solvedBoard=gurobi(board);
 	if (solvedBoard==NULL){
+		/* the gurobi returns null on unsolvable board */
 		printf("Error: board is unsolvable\n");
 	}
 	else{
@@ -214,13 +231,17 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 
 	solvedBoard=gurobi(game->curBoard->board);
-
+	/* game mode 2 is edit mode,
+	 * so we want to validate before saving */
 	if ((game->gameMode==2)&&(solvedBoard==NULL)){
 		printf("Error: board validation failed\n");
 		return;
 	}
 
-	freeBoard(solvedBoard);
+	if(solvedBoard!=NULL){
+		freeBoard(solvedBoard);
+	}
+
 
 	fp = fopen(fileToOpen, "w");
 	if (!fp){
@@ -229,13 +250,14 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 	}
 
 	fprintf(fp, "%d %d\n",m,n );
+	/* goes over the board and puts the right values in the file according to value and fixed or not */
 	for (row=0;row<N;row++){
 		for (col=0;col<N;col++){
 			fprintf(fp, "%d", (game->curBoard->board->board)[col][row].content);
 			if ((game->curBoard->board->board)[col][row].isFixed || (game->gameMode==2 && game->curBoard->board->board[col][row].content!=0)){
 				fprintf(fp, ".");
 			}
-			if (col==N-1){
+			if (col==N-1){	/* last column move to next row */
 				fprintf(fp, "\n");
 			}else{
 				fprintf(fp, " ");
@@ -248,10 +270,12 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		exit(1);
 	}
 	printf("Saved to: %s\n",fileToOpen);
-	/*sudokuBoardPrinter(game); no need to print!  */
+
 }
 
-/*initializes a geme in init mode */
+/*initializes a geme in init mode
+ * the implementation consists of allocating memory for the game and putting
+ * init values in its content */
 SudokuGame* initGameInInitMode(){
 	SudokuGame* game = (SudokuGame*)calloc(1,sizeof(SudokuGame));
 	if (!game){
@@ -259,7 +283,7 @@ SudokuGame* initGameInInitMode(){
 		exit(1);
 	}
 	game->gameMode=0; /* init */
-	game->markErrors=1;
+	game->markErrors=1;	/* They said in the forum that we initialize the game with matk_errors =1 !! */
 	game->history=(List*)calloc(1,sizeof(List));
 	if (!(game->history)){
 		printf("Problem in memory allocating");
@@ -269,7 +293,7 @@ SudokuGame* initGameInInitMode(){
 	return game;
 }
 
-/*free all resources used by game */
+/*free all resources used by the game */
 void freeGame(SudokuGame* game){
 	cleanNextNodes(game->history->head); /* clear and free history */
 	free(game->history);
@@ -278,17 +302,21 @@ void freeGame(SudokuGame* game){
 }
 
 /*changes the status to empty game in edit mode
- * used when user writed "edit" */
+ * used when user writes "edit" with no arguments */
 void changeToEmptyGameInEditMode(SudokuGame* game){
 
 	game->gameMode=2; /* 0-init 1-solve 2-edit */
 	cleanNextNodes(game->history->head);
 	game->history->head=GetNewNode(newEmptyBoard(3,3));
 	game->curBoard=game->history->head;
-	/*sudokuBoardPrinter(game);   no need to print!  */
-}
 
-int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
+}
+/* goes over the cell in the input
+ * and checks how many values you can put in the cell
+ * it is used by autofill
+ * so if it is 1, autofill will fill the cell with the number
+ * if it is 0 or more than 1 it returns 0 */
+int isTheNumberOfLegalValuesIsOne(SudokuBoard* board, int col, int row){
 	int i=1;
 	int counter = 0;
 	int m = board->m;
@@ -296,10 +324,18 @@ int getNumOfLegalValuesToPlaceInCell(SudokuBoard* board, int col, int row){
 	int N = n*m;
 	for (;i<=N;i++){
 		counter += isLegalValue(board, col, row, i);
+		if (counter > 1){
+			/* if it is more than 1, it does not matter since it is only used by autofill
+			 * and autofill only cares if it is 1*/
+			return 0;
+		}
 	}
 	return counter;
 }
 
+/* returns the single number that can be placed in a cell
+ * it is only used when there is a single number!!!
+ * it is used for autofill to put the number */
 int getSingleValueToInsert(SudokuBoard* board, int col, int row){
 	int i=1;
 
@@ -315,7 +351,8 @@ int getSingleValueToInsert(SudokuBoard* board, int col, int row){
 	return -1;
 }
 
-/* return 0 if value is not legal and 1 if is legal in the current board */
+/* return 0 if value is not legal and 1 if is legal in the current board
+ * the implementation checks the row the box and the column and returns accordingly */
 int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 	int n,m,N,i,x;
 	n = board->n;
@@ -337,7 +374,10 @@ int isLegalValue(SudokuBoard * board, int col, int row, int valueToCheck){
 
 }
 
-/* return 0 if value is not legal inside box and 1 if is legal */
+/* return 0 if value is not legal inside box and 1 if is legal
+ * it gets the start of the box in rows and in columns
+ * and checks if there is no other place the value exists
+ * if not, it returns 1 because you can put the value in the cell */
 int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valueToCheck){
 	int startCol,startRow, i,j;
 	startCol= (col/n)*n;
@@ -356,9 +396,12 @@ int checkValidInBox(SudokuBoard* board, int col, int row, int n, int m, int valu
 
 }
 
-/* executes the autofill command on the game board */
+/* executes the autofill command on the game board
+ * goes over the board every cell
+ * and checks the number of possible values
+ * if it is 1 it is filling it with the value that must be placed there */
 void autofill(SudokuGame* game){
-	int n,m,N, somethingChanged, col, row,x;
+	int n,m,N, somethingChanged, col, row,numberOfOptions;
 	SudokuBoard* newBoard;
 	Node* node;
 
@@ -378,10 +421,8 @@ void autofill(SudokuGame* game){
 		for (col = 0;col<N;col++){
 			if ((newBoard->board[col][row]).content==0)
 			{
-				x = getNumOfLegalValuesToPlaceInCell(game->curBoard->board, col,row);
-				/*not sure about that - if there is 0 things to put here, does that counts for an erroneous? */
-
-				if (x==1){
+				numberOfOptions = isTheNumberOfLegalValuesIsOne(game->curBoard->board, col,row);
+				if (numberOfOptions==1){
 					newBoard->board[col][row].content=getSingleValueToInsert(game->curBoard->board, col,row);
 					somethingChanged = 1;
 				}
@@ -401,15 +442,18 @@ void autofill(SudokuGame* game){
 	node->prev=game->curBoard; /* update prev and next */
 	game->curBoard->next=node;
 	game->curBoard=node;
-
+	/* want to check if autofill changes something in the status of the error cells */
 	updateErrorsInBoard(game->curBoard->board);
+
 	sudokuBoardPrinter(game);
+	/* if it is full, act accordingly like a set command filled the board */
 	if (boardIsFull(game->curBoard->board)){
 		dealWithFullBoard(game);
 	}
 }
 
-/* returns 1 iff board has errors */
+/* returns 1 iff board has errors
+ * the implementation goes over the board in a loop and checks if cells are errors */
 int boardHasErrors(SudokuBoard* board){
 	int i,j,n,m,N;
 	n = board->n;
@@ -441,7 +485,7 @@ void updateErrorsInBoard(SudokuBoard* board){
 		for (;row<N;row++){
 			curValue = board->board[col][row].content;
 			if (curValue!=0){
-
+				/* if the current cell is not legal, it is an error... */
 				error = !isLegalValue(board, col, row, curValue );
 				board->board[col][row].isError = error;
 			}
@@ -469,7 +513,8 @@ int boardIsFull(SudokuBoard* board){
 	return 1;
 }
 
-/* returns 1 iff board is empty */
+/* returns 1 iff the board is empty
+ * i.e all the values are 0 */
 int boardIsEmpty(SudokuBoard* board){
 	int n,m,N,i,j;
 	n = board->n;
@@ -636,9 +681,12 @@ int countNumberOfSolutions(SudokuBoard* board){
 				break;
 			}
 			else{
+				/*crossed all the numbers and the cell is not fixed, we want to roll back in the backtrack */
 				if (board->board[currentNode->col][currentNode->row].isFixed!=1){
 					board->board[currentNode->col][currentNode->row].content=0;
 				}
+				/*take out the node and increase the previous one because we crossed all options */
+
 				pop(workStack);
 				increaseHeadOfStackByOne(workStack);
 			}
@@ -649,17 +697,32 @@ int countNumberOfSolutions(SudokuBoard* board){
 				if (board->board[currentNode->col][currentNode->row].content==currentNode->numToCheck){
 					if (isLegalValue(board,currentNode->col,currentNode->row,currentNode->numToCheck)==1){
 						if (currentNode->col==N-1&&currentNode->row==N-1){
+							/*last cell and it is legal
+							 * we found a valid solution!
+							 * increase the counter and take out the node
+							 and move back in the backtracking */
+
 							counter++;
 							pop(workStack);
 							increaseHeadOfStackByOne(workStack);
 						}
 						else{
 							if (currentNode->col!=N-1){
+								/* it is not the last column
+								 * and the value is legal
+								 * so we push a new node with the next cell to the stack
+								 * and continue to search for a solutions */
+
 								nodeToPush = getNewStackNode(currentNode->col+1, currentNode->row, 1);
 								push(workStack, nodeToPush );
 								free(nodeToPush);
 							}
 							else{
+								/* it is the last column
+								 * and the value is legal
+								 * so we push a new node with the next cell (next row, col is 0) to the stack
+								 * and continue to search for a solutions */
+
 								nodeToPush = getNewStackNode(0, currentNode->row+1, 1);
 								push(workStack,nodeToPush );
 								free(nodeToPush);
@@ -731,6 +794,7 @@ int manageArray(int* arr, int ind){
  * in range [1,size] ; size=Arr[0].
  * (based on optional indexes)
  * for the random board generator.
+ * used to function generate
  *  */
 int getRandIndex(int* Arr){
 
@@ -744,6 +808,10 @@ int getRandIndex(int* Arr){
 	return ran;
 }
 
+/* clears Y cells from the board
+ * it is used when the generate function needs to keep
+ * only a part of the solved board it has
+  */
 
 void clearYCells(SudokuBoard* board, int y, int N){
 	int i,ind;
@@ -761,15 +829,7 @@ void clearYCells(SudokuBoard* board, int y, int N){
 		board->board[xArray[ind]/N][xArray[ind]%N].content=0;
 		manageArray(xArray,ind);
 	}
-	/*
-	while(y>0){
-		ind=getRandIndex(xArray);
-		if(board->board[ind/N][ind%N].content>0){
-			board->board[ind/N][ind%N].content=0;
-			y--;
-		}
-	}
-	*/
+
 	free(xArray);
 }
 
@@ -786,7 +846,11 @@ stackNode* getNewStackNode(int col, int row, int numToCheck){
 	return result;
 }
 
-/* returns a new empty stack */
+/* creates and returns a new empty stack
+ * with max_num size
+ * but dont worry!
+ * if the num of nodes gets bigger it doubles the size
+ * we learned in data structures that this is an efficient way to create a stack */
 stack* createNewEmptyStack(int max_num){
 	stack* result = (stack*)calloc(1, sizeof(stack));
 	if (!result){
@@ -803,7 +867,8 @@ stack* createNewEmptyStack(int max_num){
 	return result;
 }
 
-/* pushes the node to the stack */
+/* pushes the node to the stack
+ * puts the node on the head of the array (the num_elements place) */
 void push(stack* stack, stackNode* nodeToPush){
 	if(stack->numOfElements==stack->max_num){
 		if ((realloc(stack->array, 2*stack->max_num)==NULL)){
@@ -832,7 +897,8 @@ stackNode pop(stack* stack){
 
 }
 
-/* peek in the head of the stack*/
+/* peek in the head of the stack
+ * returns a pointer to the head of the stack*/
 stackNode* peek(stack* stack){
 	return &(stack->array[stack->numOfElements-1]);
 }
@@ -844,14 +910,15 @@ void freeStack(stack* stack){
 	free(stack);
 }
 
-/* increases the number to check in the head of the stacy by 1*/
+/* increases the number to check in the head of the stack by 1*/
 void increaseHeadOfStackByOne(stack* stacker){
 
 	stacker->array[stacker->numOfElements-1].numToCheck+=1;
 
 }
 
-/* creates a new sudokecell*/
+/* creates a new sudokecell
+ * with the parameters supplied*/
 SudokuCell* createNewCell(int content, int isFixed, int isError){
 	SudokuCell * cellRef = (SudokuCell*)calloc(1, sizeof(SudokuCell));
 	if (!cellRef){
@@ -864,7 +931,8 @@ SudokuCell* createNewCell(int content, int isFixed, int isError){
 		return cellRef;
 }
 
-/* creates a new empty sudoku board*/
+/* creates a new empty sudoku board
+ * with the parameters n and m*/
 SudokuBoard* newEmptyBoard(int n, int m){
 	int i,j,N;
 	int** a;

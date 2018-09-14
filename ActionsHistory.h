@@ -1,10 +1,3 @@
-/*
- * ActionsHistory.h
- *
- *  Created on: Aug 17, 2018
- *      Author: User
- */
-
 #ifndef ACTIONSHISTORY_H_
 #define ACTIONSHISTORY_H_
 
@@ -16,6 +9,7 @@
 #include "ActionsHistory.h"
 #include "SPBufferset.h"
 #include "structs.h"
+
 /*
  * Returns a new Node of the undo redo list which contains the sudoku board recieved
  */

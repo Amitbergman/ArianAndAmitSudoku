@@ -55,6 +55,8 @@ int hasNotNums(char* toCheck){
  * The implementation is with comparing the string to the words of the commands as described in the project description.
  * after we compared the string we check if it is in the correct format as describes in the project description
  * if the format is correct, we execute the right function from the gameUtils.
+ *
+ *
 */
 int parseit(SudokuGame* game, char* str){
 
@@ -77,9 +79,6 @@ int parseit(SudokuGame* game, char* str){
 		printf("ERROR: invalid command\n");
 		return 0;
 	}
-	if(token==NULL){
-		return 0;
-	}
 
 	if(strcmp(token,"solve")==0){
 		token = strtok(NULL, s);
@@ -87,6 +86,7 @@ int parseit(SudokuGame* game, char* str){
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
+		/* it is load with parameter 1 because 1 represents solve mode in our program */
 		loadBoardFromFile(game, token, 1);
 		return 0;
 	}
@@ -98,6 +98,8 @@ int parseit(SudokuGame* game, char* str){
 			sudokuBoardPrinter(game);
 			return 0;
 		}
+		/* it is load with parameter 2 because 2 represents edit mode in our program */
+
 		loadBoardFromFile(game, token, 2);
 
 		return 0;
@@ -108,6 +110,8 @@ int parseit(SudokuGame* game, char* str){
 			return 0;
 		}
 		token = strtok(NULL, s);
+
+		/*	check if the second token of mark errors is only 0's and 1's	 */
 
 		check = checkValidityAndPrintForMarkErrors(token);
 		if (check==0){
@@ -124,16 +128,24 @@ int parseit(SudokuGame* game, char* str){
 	}
 	if(strcmp(token,"print_board")==0){
 		if(game->gameMode==0){
+			/* do not print in init mode  */
+
 			printf("ERROR: invalid command\n");
 		}
 		else{
+
+			/*
+
+				prints the board as requested by user
+			 */
+
 			sudokuBoardPrinter(game);
 		}
 		return 0;
 	}
 
 	if(strcmp(token,"set")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/* no  set in init mode */
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
@@ -144,6 +156,7 @@ int parseit(SudokuGame* game, char* str){
 			exit(1);
 		}
 		check=0;
+		/* checks validity of the parameters */
 		for(i=0;i<3;i++){
 			token = strtok(NULL, s);
 			if (token==NULL){
@@ -152,9 +165,12 @@ int parseit(SudokuGame* game, char* str){
 				return 0;
 			}
 			if (check==0){
+				/* if it has not numbers, it is not valid for set */
 				check=hasNotNums(token);
 			}
 			if (check==0){
+				/* if atoi is 0 and the char is not 0 so atoi had a problem
+				 * that is what written in the documentation of atoi online */
 				if (atoi(token)>N||atoi(token)<0||(atoi(token)==0&&(i<2||token[0]!='0'))){
 					check=1;
 				}
@@ -164,6 +180,7 @@ int parseit(SudokuGame* game, char* str){
 			}
 		}
 		if (check==1){
+			/* got 3 parameters but 1 of them is wrong */
 			printf("Error: value not in range 0-%d\n",N);
 			free(a);
 			return 0;
@@ -175,7 +192,7 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"validate")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/* no validate in init mode */
 			printf("ERROR: invalid command\n");
 		}
 		else{
@@ -184,7 +201,7 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"undo")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/* no undo in init mode */
 			printf("ERROR: invalid command\n");
 		}
 		else{
@@ -193,7 +210,7 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"redo")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/* no redo in init mode */
 			printf("ERROR: invalid command\n");
 		}
 		else{
@@ -202,7 +219,7 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"reset")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/* no reset in init mode */
 			printf("ERROR: invalid command\n");
 		}
 
@@ -213,6 +230,7 @@ int parseit(SudokuGame* game, char* str){
 		return 0;
 	}
 	if(strcmp(token,"exit")==0){
+		/* exit the game */
 		return 1;
 	}
 
@@ -223,6 +241,7 @@ int parseit(SudokuGame* game, char* str){
 		}
 		token = strtok(NULL, s);
 		if (token == NULL){
+			/* save without an argument */
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
@@ -244,6 +263,7 @@ int parseit(SudokuGame* game, char* str){
 		}
 
 		check=0;
+		/* checks validity of the parameters */
 		for(i=0;i<2;i++){
 			token = strtok(NULL, s);
 			if (token==NULL){
@@ -264,6 +284,7 @@ int parseit(SudokuGame* game, char* str){
 			}
 		}
 		if (check==1){
+			/* we got 2 params but one of them is error */
 			printf("Error: value not in range 1-%d\n",N);
 			free(a);
 			return 0;
@@ -277,7 +298,7 @@ int parseit(SudokuGame* game, char* str){
 	}
 
 	if (strcmp(token,"num_solutions")==0){
-		if(game->gameMode==0){
+		if(game->gameMode==0){/*no num_solutions in init mode */
 			printf("ERROR: invalid command\n");
 			return 0;
 		}
@@ -311,14 +332,17 @@ int parseit(SudokuGame* game, char* str){
 		for(i=0;i<2;i++){
 			token = strtok(NULL, s);
 			if (token==NULL){
+				/* missing parameter*/
 				printf("ERROR: invalid command\n");
 				free(a);
 				return 0;
 			}
 			if (check==0){
+				/* ensures the parameter has only numbers */
 				check=hasNotNums(token);
 			}
 			if (check==0){
+				/* gets the integer value of the parameter */
 				if (atoi(token)>N*N||atoi(token)<0){
 					check=1;
 				}
@@ -328,13 +352,14 @@ int parseit(SudokuGame* game, char* str){
 			}
 		}
 		if (check==1){
+			/* we got 3 parameters but there is a problem in one of them at least */
 			printf("Error: value not in range 0-%d\n",N*N);
 			free(a);
 			return 0;
 		}
 
 
-		if(boardIsEmpty(game->curBoard->board)==0){ /* if board is not empty*/
+		if(boardIsEmpty(game->curBoard->board)==0){ /* do not generate if not empty*/
 			printf("Error: board is not empty\n");
 			free(a);
 			return 0;
@@ -343,10 +368,12 @@ int parseit(SudokuGame* game, char* str){
 
 		N = game->curBoard->board->m*game->curBoard->board->n;
 		y = N*N-a[1];
+		/* wants to leave only a[1] cells alive so we send N^2-a[1] cells to be deleted */
 		if (a[1]>0){
 			generateXY(game,a[0],y);
 		}
 		else{
+			/* no change in the board since the user wants 0 cells */
 			sudokuBoardPrinter(game);
 		}
 		free(a);

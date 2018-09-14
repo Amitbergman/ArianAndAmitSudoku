@@ -35,6 +35,11 @@ int startGame(){
 		printf("Enter your command:\n");
 		fgets(input,1024,stdin);
 		inputPointer=input;
+
+		/*
+		this input pointer is in order to search for unnecassary blank spaces, while it is a blank space, the pointer moves forward.
+		 */
+
 		while(inputPointer[0]==' '){
 			inputPointer++;
 		}
