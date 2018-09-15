@@ -22,6 +22,7 @@ int startGame(){
 	int exitTheGame;
 	char* input;
 	char* inputPointer;
+	char* check;
 	SudokuGame* game;
 
 	exitTheGame=0;
@@ -32,12 +33,20 @@ int startGame(){
 	}
 	game = initGameInInitMode();
 	while ((exitTheGame==0)&&(!feof(stdin))){
+
 		printf("Enter your command:\n");
-		fgets(input,1024,stdin);
+		/*
+		*if check is NULL it means that we reaches EOF so we act like exit was typed
+		 */
+		check = fgets(input,1024,stdin);
+		if (check==NULL){
+			break;
+		}
 		inputPointer=input;
 
 		/*
-		this input pointer is in order to search for unnecassary blank spaces, while it is a blank space, the pointer moves forward.
+		*this inputpointer variable exists in order to search for unnecassary blank spaces,
+		*while it is a blank space, the pointer moves forward.
 		 */
 
 		while(inputPointer[0]==' '){
@@ -55,10 +64,11 @@ int startGame(){
 }
 int main ()
 {	SP_BUFF_SET();
-
 	srand(time(NULL));
+
 	printf("Sudoku\n------\n");
 	startGame();
+
 	printf("Exiting...\n");
 	return 0;
 }

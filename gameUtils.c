@@ -57,6 +57,7 @@ void loadBoardFromFile(SudokuGame* game, char* fileToOpen, int mode){
 			printf("Error: File cannot be opened\n");
 
 		}
+		sudokuBoardPrinter(game);
 		return;
 
 	}
@@ -177,7 +178,7 @@ void validate(SudokuBoard* board){
 		printf("Error: board contains erroneous values\n");
 		return;
 	}
-	result = gurobi(board);/*tries to solve the board */
+	result = solveSudoku(board);/*tries to solve the board */
 	if (result==NULL){/*did not succeed in solving */
 		printf("Validation failed: board is unsolvable\n");
 	}
@@ -205,7 +206,7 @@ void hintXY(SudokuBoard* board, int col, int row){
 		printf("Error: cell already contains a value\n");
 		return;
 	}
-	solvedBoard=gurobi(board);
+	solvedBoard=solveSudoku(board);
 	if (solvedBoard==NULL){
 		/* the gurobi returns null on unsolvable board */
 		printf("Error: board is unsolvable\n");
@@ -230,7 +231,7 @@ void saveBoardToFile(SudokuGame* game, char* fileToOpen){
 		return;
 	}
 
-	solvedBoard=gurobi(game->curBoard->board);
+	solvedBoard=solveSudoku(game->curBoard->board);
 	/* game mode 2 is edit mode,
 	 * so we want to validate before saving */
 	if ((game->gameMode==2)&&(solvedBoard==NULL)){
@@ -571,7 +572,7 @@ int generateXY(SudokuGame* game,int x, int y){
 				draftBoard->board[indX][indY].content=nums[ind]; /* set random legal value in random x,y */
 			}
 		}
-		solvedBoard=gurobi(draftBoard);
+		solvedBoard=solveSudoku(draftBoard);
 		if ((allSuccess=0)||(solvedBoard==NULL)){
 			freeBoard(draftBoard);
 			draftBoard=duplicateBoard(board);

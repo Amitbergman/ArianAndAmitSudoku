@@ -1,6 +1,6 @@
 #ifndef STRUCTS_H_
 #define STRUCTS_H_
- /* This module is responsible for the declarations of all
+ /* This module is responsible for the declarations and definind of all
   * the structs we use in our project.
  */
 

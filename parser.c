@@ -6,6 +6,10 @@
 #include "gameUtils.h"
 #include "structs.h"
 #include "ActionsHistory.h"
+ /* This module is responsible for parsing the commands of the user
+ * and deciding on the right function to execute
+ */
+
 
 /*Inner method
  * used to check if the input for mark errors has only 1's and 0's
@@ -258,7 +262,6 @@ int parseit(SudokuGame* game, char* str){
 		a=(int*)calloc(2,sizeof(int));
 		if (!a){
 			printf("Error: problem while allocating memory");
-			free(a);
 			exit(1);
 		}
 
